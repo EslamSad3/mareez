@@ -1,75 +1,73 @@
-const Category = require("../models/CategoryModel");
-const slugify = require("slugify")
 const asyncHandler = require("express-async-handler");
+const slugify = require("slugify");
+const Category = require("../models/categoryModel");
 const ApiError = require("../utils/apiError");
-
-
 
 // @desc      Get List Of Categories
 // @route     GET /api/categories
 // @access    Public
 
 exports.getCategories = asyncHandler(async (req, res) => {
-  const page = (req.query.page * 1) || 1;
-  const limit = (req.query.limit * 1) || 30
-  const skip = (page - 1) * limit
-  const categories = await Category.find({}).skip(skip).limit(limit)
-  res.status(200).json({ results: categories.length, page, data: categories })
-})
-
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 30;
+  const skip = (page - 1) * limit;
+  const categories = await Category.find({}).skip(skip).limit(limit);
+  res.status(200).json({ results: categories.length, page, data: categories });
+});
 
 // @desc      Get Specific Category by id
 // @route     GET /api/categories/:id
 // @access    Public
 
-exports.getCategory = asyncHandler(async (req, res ,next) => {
-  const { id } = req.params
-  const category = await Category.findById(id)
+exports.getCategory = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const category = await Category.findById(id);
   if (!category) {
     // res.status(404).json({ msg: `No Category For This id ${id}` })
-   return next(new ApiError(`No Category For This id ${id}`,404))
+    return next(new ApiError(`No Category For This id ${id}`, 404));
   }
-  res.status(200).json({ data: category })
-})
-
+  res.status(200).json({ data: category });
+});
 
 // @desc      Create Category
 // @route     POST /api/categories
 // @access    private
 exports.createCategory = asyncHandler(async (req, res) => {
-  const { name } = req.body
+  const { name } = req.body;
   //async await
-  const category = await Category.create({ name, slug: slugify(name) })
-  res.status(201).json({ data: category })
+  const category = await Category.create({ name, slug: slugify(name) });
+  res.status(201).json({ data: category });
   // Category.create({name,slug:slugify(name)}).then(category =>res.status(201).json({data:category})).catch(err => res.status(400).send(err))
-})
-
+});
 
 // @desc      Update Category
 // @route     PUT /api/categories/:id
 // @access    private
 exports.updateCategory = asyncHandler(async (req, res, next) => {
-  const { id } = req.params
-  // const slug = slugify(req.body.name) 
-  const { name } = req.body
-  const category = await Category.findOneAndUpdate({ _id: id }, { name, slug:slugify(name) }, { new: true })
+  const { id } = req.params;
+  // const slug = slugify(req.body.name)
+  const { name } = req.body;
+  const category = await Category.findOneAndUpdate(
+    { _id: id },
+    { name, slug: slugify(name) },
+    { new: true }
+  );
   if (!category) {
     // res.status(404).json({ msg: `No Category For This id ${id}` })
-    return next(new ApiError(`No Category For This id ${id}`,404))
+    return next(new ApiError(`No Category For This id ${id}`, 404));
   }
-  res.status(200).json({ data: category })
-})
-
+  res.status(200).json({ data: category });
+});
 
 // @desc      Delete Category
 // @route     DELETE /api/categories/:id
 // @access    private
-exports.deleteCategory = asyncHandler(async (req,res, next)=>{
-  const { id } = req.params
-  const category = await Category.findByIdAndDelete(id)
-  if(!category){
+exports.deleteCategory = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const category = await Category.findByIdAndDelete(id);
+  if (!category) {
     // res.status(404).json({msg : `No Category Found For This id ${id}`})
-    return next(new ApiError(`No Category For This id ${id}`,404))
+    return next(new ApiError(`No Category For This id ${id}`, 404));
   }
-  res.status(204).send()
-})
+  res.status(204).send();
+});
