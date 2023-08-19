@@ -35,7 +35,7 @@ app.all("*",(req,res,next)=>{
   next(new ApiError(`Can't find this route : ${req.originalUrl}`,400))
 })
 
-// Express Error Handling Middleware (Global)
+// Express Error Handling Middleware (Global) for express
 app.use(globalError);
 
 if (process.env.NODE_ENV === "development") {
@@ -44,4 +44,14 @@ if (process.env.NODE_ENV === "development") {
 }
 
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`running on port : ${PORT}`));
+const server = app.listen(PORT, () => console.log(`running on port : ${PORT}`));
+
+
+//  Handling Errors (rejections) OutSide Express
+process.on("unhandledRejection",(err)=>{
+  console.error(`unhandledRejection Errors : ${err.name} | ${err.message}`)
+  server.close(()=>{
+    console.log("Shutting Down ...")
+    process.exit(1)
+  })
+})
