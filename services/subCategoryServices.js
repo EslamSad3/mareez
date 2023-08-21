@@ -23,7 +23,10 @@ exports.getsubCategorires = asyncHandler(async (req, res) => {
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 30;
   const skip = (page - 1) * limit;
-  const subCategorires = await SubCategory.find({}).skip(skip).limit(limit);
+  const subCategorires = await SubCategory.find({})
+    .skip(skip)
+    .limit(limit)
+    .populate({ path: "category", select: "name" }); // select: "name -_id" => no id
   res
     .status(200)
     .json({ results: subCategorires.length, page, data: subCategorires });
@@ -34,23 +37,22 @@ exports.getsubCategorires = asyncHandler(async (req, res) => {
 // @access    Public
 exports.getSubCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const subcategory = await SubCategory.findById(id);
+  const subcategory = await SubCategory.findById(id).populate({ path: "category", select: "name" });
   if (!subcategory) {
     return next(new ApiError(`No SubCategory For This id ${id}`, 404));
   }
   res.status(200).json({ data: subcategory });
 });
 
-
 // @desc      Update subCategory
 // @route     PUT /api/subcategories/:id
 // @access    private
 exports.updateSubCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const { name,category } = req.body;
+  const { name, category } = req.body;
   const subCategory = await SubCategory.findOneAndUpdate(
     { _id: id },
-    { name, slug: slugify(name) ,category},
+    { name, slug: slugify(name), category },
     { new: true }
   );
   if (!subCategory) {
