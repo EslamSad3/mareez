@@ -39,7 +39,7 @@ const productShema = new mongoose.Schema(
     priceAfterDisc: {
       type: Number,
     },
-    color: {
+    colors: {
       type: [String],
     },
     imageCover: {
