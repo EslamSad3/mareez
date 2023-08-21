@@ -1,12 +1,14 @@
 const express = require("express");
 const dotenv = require("dotenv");
+
 dotenv.config();
-const ApiError = require("./utils/apiError");
 const morgan = require("morgan");
+const ApiError = require("./utils/apiError");
 const dbConnection = require("./config/db");
-const { createCategory } = require("./services/categoryServices");
 const categoryRoute = require("./routes/categoryRoute");
+const subCategoryRoute = require("./routes/subCategoryRoute");
 const globalError = require("./middlewares/errorMiddleware");
+
 
 // DB Connection
 dbConnection();
@@ -19,7 +21,7 @@ app.use(express.json());
 
 // Mount Routes
 app.use("/api/categories", categoryRoute);
-
+app.use("/api/subcategories",subCategoryRoute)
 
 // Error handling ways
 

@@ -3,32 +3,6 @@ const slugify = require("slugify");
 const Category = require("../models/categoryModel");
 const ApiError = require("../utils/apiError");
 
-// @desc      Get List Of Categories
-// @route     GET /api/categories
-// @access    Public
-
-exports.getCategories = asyncHandler(async (req, res) => {
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 30;
-  const skip = (page - 1) * limit;
-  const categories = await Category.find({}).skip(skip).limit(limit);
-  res.status(200).json({ results: categories.length, page, data: categories });
-});
-
-// @desc      Get Specific Category by id
-// @route     GET /api/categories/:id
-// @access    Public
-
-exports.getCategory = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const category = await Category.findById(id);
-  if (!category) {
-    // res.status(404).json({ msg: `No Category For This id ${id}` })
-    return next(new ApiError(`No Category For This id ${id}`, 404));
-  }
-  res.status(200).json({ data: category });
-});
-
 // @desc      Create Category
 // @route     POST /api/categories
 // @access    private
@@ -39,6 +13,33 @@ exports.createCategory = asyncHandler(async (req, res) => {
   res.status(201).json({ data: category });
   // Category.create({name,slug:slugify(name)}).then(category =>res.status(201).json({data:category})).catch(err => res.status(400).send(err))
 });
+
+// @desc      Get Specific Category by id
+// @route     GET /api/categories/:id
+// @access    Public
+exports.getCategory = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const category = await Category.findById(id);
+  if (!category) {
+    // res.status(404).json({ msg: `No Category For This id ${id}` })
+    return next(new ApiError(`No Category For This id ${id}`, 404));
+  }
+  res.status(200).json({ data: category });
+});
+
+
+// @desc      Get List Of Categories
+// @route     GET /api/categories
+// @access    Public
+exports.getCategories = asyncHandler(async (req, res) => {
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 30;
+  const skip = (page - 1) * limit;
+  const categories = await Category.find({}).skip(skip).limit(limit);
+  res.status(200).json({ results: categories.length, page, data: categories });
+});
+
+
 
 // @desc      Update Category
 // @route     PUT /api/categories/:id
