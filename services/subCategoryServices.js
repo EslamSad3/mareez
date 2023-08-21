@@ -23,7 +23,20 @@ exports.getsubCategorires = asyncHandler(async (req, res) => {
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 30;
   const skip = (page - 1) * limit;
-  const subCategorires = await SubCategory.find({})
+
+  console.log(req.params.categoryid);
+
+  // Get subcategories by categoryid
+
+  // let filterObj = {};
+  // if (req.params.categoryid) {
+  //   filterObj = { category: req.params.categoryid };
+  // }
+  const filterObj = req.params.categoryid
+    ? { category: req.params.categoryid }
+    : {};
+    
+  const subCategorires = await SubCategory.find(filterObj)
     .skip(skip)
     .limit(limit)
     .populate({ path: "category", select: "name" }); // select: "name -_id" => no id
@@ -37,7 +50,10 @@ exports.getsubCategorires = asyncHandler(async (req, res) => {
 // @access    Public
 exports.getSubCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const subcategory = await SubCategory.findById(id).populate({ path: "category", select: "name" });
+  const subcategory = await SubCategory.findById(id).populate({
+    path: "category",
+    select: "name",
+  });
   if (!subcategory) {
     return next(new ApiError(`No SubCategory For This id ${id}`, 404));
   }
