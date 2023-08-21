@@ -4,11 +4,13 @@ const dotenv = require("dotenv");
 dotenv.config();
 const morgan = require("morgan");
 const ApiError = require("./utils/apiError");
+const globalError = require("./middlewares/errorMiddleware");
 const dbConnection = require("./config/db");
+
+// routes
 const categoryRoute = require("./routes/categoryRoute");
 const subCategoryRoute = require("./routes/subCategoryRoute");
-const globalError = require("./middlewares/errorMiddleware");
-
+const brandRoute = require("./routes/brandRoute");
 
 // DB Connection
 dbConnection();
@@ -21,7 +23,8 @@ app.use(express.json());
 
 // Mount Routes
 app.use("/api/categories", categoryRoute);
-app.use("/api/subcategories",subCategoryRoute)
+app.use("/api/subcategories", subCategoryRoute);
+app.use("/api/brands", brandRoute);
 
 // Error handling ways
 
@@ -31,11 +34,10 @@ app.use("/api/subcategories",subCategoryRoute)
 //   next(err.message)
 // })
 
-
-// 2- Create CUustom and reusable err handling middleware 
-app.all("*",(req,res,next)=>{
-  next(new ApiError(`Can't find this route : ${req.originalUrl}`,400))
-})
+// 2- Create CUustom and reusable err handling middleware
+app.all("*", (req, res, next) => {
+  next(new ApiError(`Can't find this route : ${req.originalUrl}`, 400));
+});
 
 // Express Error Handling Middleware (Global) for express
 app.use(globalError);
@@ -48,12 +50,11 @@ if (process.env.NODE_ENV === "development") {
 const PORT = process.env.PORT || 8000;
 const server = app.listen(PORT, () => console.log(`running on port : ${PORT}`));
 
-
 //  Handling Errors (rejections) OutSide Express
-process.on("unhandledRejection",(err)=>{
-  console.error(`unhandledRejection Errors : ${err.name} | ${err.message}`)
-  server.close(()=>{
-    console.log("Shutting Down ...")
-    process.exit(1)
-  })
-})
+process.on("unhandledRejection", (err) => {
+  console.error(`unhandledRejection Errors : ${err.name} | ${err.message}`);
+  server.close(() => {
+    console.log("Shutting Down ...");
+    process.exit(1);
+  });
+});
