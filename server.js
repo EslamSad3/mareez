@@ -11,6 +11,7 @@ const dbConnection = require("./config/db");
 const categoryRoute = require("./routes/categoryRoute");
 const subCategoryRoute = require("./routes/subCategoryRoute");
 const brandRoute = require("./routes/brandRoute");
+const productRoute = require("./routes/productRoute");
 
 // DB Connection
 dbConnection();
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use("/api/categories", categoryRoute);
 app.use("/api/subcategories", subCategoryRoute);
 app.use("/api/brands", brandRoute);
+app.use("/api/products", productRoute);
 
 // Error handling ways
 

@@ -4,6 +4,7 @@ const productShema = new mongoose.Schema(
   {
     title: {
       type: String,
+      unique: true,
       required: [true, "title is required"],
       trim: true,
       minlength: [3, "Too short product name"],
@@ -71,7 +72,7 @@ const productShema = new mongoose.Schema(
       max: [5, "rating must be less than or equal 5"],
       required: true,
     },
-    ratingQuantity: {
+    rates: {
       type: Number,
       default: 0,
     },
