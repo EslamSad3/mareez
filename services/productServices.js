@@ -52,7 +52,7 @@ exports.getProducts = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit;
 
   // Build mongoose query
-  const mongooseQuery = Product.find(JSON.parse(queryStr))
+  let mongooseQuery = Product.find(JSON.parse(queryStr))
     .skip(skip)
     .limit(limit)
     .populate([
@@ -61,6 +61,13 @@ exports.getProducts = asyncHandler(async (req, res) => {
       { path: 'brand', select: 'name' },
     ]);
 
+  // 3-Sorting
+  if (req.query.sort) {
+    console.log(req.query.sort);
+    const sortBy = req.query.sort.split(',').join(' ');
+    mongooseQuery = mongooseQuery.sort(sortBy);
+    console.log(sortBy);
+  }
   // Excute mongoose query
   const products = await mongooseQuery;
   res.status(200).json({ results: products.length, page, data: products });
