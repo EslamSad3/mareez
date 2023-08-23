@@ -12,7 +12,7 @@ exports.createProductValidator = [
   check('description')
     .notEmpty()
     .withMessage('Product Description is required')
-    .isLength({ max: 3000 })
+    .isLength({ max: 10000 })
     .withMessage('Product Description is too long'),
   check('quantity')
     .notEmpty()
@@ -65,18 +65,34 @@ exports.createProductValidator = [
     ),
   check('brand').optional().isMongoId().withMessage('invalid brand id format'),
   check('subcategory')
-  .optional()
-  .isMongoId()
-  .withMessage('Invalid ID formate')
-  .custom((subcategoriesIds) =>
-    SubCategory.find({ _id: { $exists: true, $in: subcategoriesIds } }).then(
-      (result) => {
-        if (result.length < 1 || result.length !== subcategoriesIds.length) {
-          return Promise.reject(new Error(`Invalid subcategories Ids`));
+    .optional()
+    .isMongoId()
+    .withMessage('Invalid ID formate')
+    .custom((subcategoriesIds) =>
+      SubCategory.find({ _id: { $exists: true, $in: subcategoriesIds } }).then(
+        (result) => {
+          if (result.length < 1 || result.length !== subcategoriesIds.length) {
+            return Promise.reject(new Error(`Invalid subcategories Ids`));
+          }
         }
-      }
+      )
     )
-  ),
+    .custom((subs, { req }) =>
+      SubCategory.find({ category: req.body.category }).then(
+        (subcategories) => {
+          const subcategoriesIdsDB = [];
+          subcategories.forEach((subcategory) => {
+            subcategoriesIdsDB.push(subcategory._id.toString());
+          });
+          const checker = subs.every((sub) => subcategoriesIdsDB.includes(sub));
+          if (!checker) {
+            return Promise.reject(
+              new Error(`SubCategories not belonging to this category`)
+            );
+          }
+        }
+      )
+    ),
   check('rating')
     .optional()
     .isNumeric()

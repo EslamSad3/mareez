@@ -39,8 +39,6 @@ exports.getsubCategorires = asyncHandler(async (req, res) => {
   const limit = req.query.limit * 1 || 30;
   const skip = (page - 1) * limit;
 
-  console.log(req.params.categoryid);
-
   // Get subcategories by categoryid
 
   // let filterObj = {};
