@@ -39,13 +39,20 @@ exports.getProducts = asyncHandler(async (req, res) => {
     delete queryStringObj[filed];
   });
 
+  // mongoquery ==> {price :{$gte:50}, rating:{$gte:4}}
+  // Browser Query ==> {price :{gte:50}, rating:{gte:4}}
+
+  // Apply Filteration
+  let queryStr = JSON.stringify(queryStringObj);
+  queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+
   // 2- pagaination
   const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 5;
+  const limit = req.query.limit * 1 || 30;
   const skip = (page - 1) * limit;
 
   // Build mongoose query
-  const mongooseQuery = Product.find(queryStringObj)
+  const mongooseQuery = Product.find(JSON.parse(queryStr))
     .skip(skip)
     .limit(limit)
     .populate([
