@@ -34,7 +34,7 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
 exports.getProducts = asyncHandler(async (req, res) => {
   // 1- filtering
   const queryStringObj = { ...req.query };
-  const excludedFileds = ['page', 'limit', 'skip', 'fileds'];
+  const excludedFileds = ['page', 'limit', 'skip', 'fields', 'sort'];
   excludedFileds.forEach((filed) => {
     delete queryStringObj[filed];
   });
@@ -63,11 +63,19 @@ exports.getProducts = asyncHandler(async (req, res) => {
 
   // 3-Sorting
   if (req.query.sort) {
-    console.log(req.query.sort);
     const sortBy = req.query.sort.split(',').join(' ');
     mongooseQuery = mongooseQuery.sort(sortBy);
-    console.log(sortBy);
+  } else {
+    mongooseQuery = mongooseQuery.sort('-createdAt');
   }
+
+  // 4- Fileds Limiting
+  if (req.query.fields) {
+    const fieldsBy = req.query.fields.split(',').join(' ');
+    console.log(fieldsBy);
+    mongooseQuery = mongooseQuery.select(fieldsBy);
+  }
+
   // Excute mongoose query
   const products = await mongooseQuery;
   res.status(200).json({ results: products.length, page, data: products });

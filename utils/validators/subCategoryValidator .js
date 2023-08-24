@@ -1,52 +1,52 @@
-const { check } = require("express-validator");
-const validatorMiddleWare = require("../../middlewares/validatorMiddleWare");
+const { check } = require('express-validator');
+const validatorMiddleWare = require('../../middlewares/validatorMiddleWare');
 
 exports.getSubCategoryValidator = [
-  check("id")
+  check('id')
     .notEmpty()
-    .withMessage("SubCategory Id Is required")
+    .withMessage('SubCategory Id Is required')
     .isMongoId()
-    .withMessage("Invalid Category ID Formate"),
+    .withMessage('Invalid Category ID Formate'),
   validatorMiddleWare,
 ];
 
 exports.createSubCategoryValidator = [
-  check("name")
+  check('name')
     .notEmpty()
-    .withMessage("category Required")
+    .withMessage('category Required')
     .isLength({ min: 2 })
-    .withMessage("Too Short Name")
+    .withMessage('Too Short Name')
     .isLength({ max: 20 })
-    .withMessage("Too Long Name"),
-  check("category")
+    .withMessage('Too Long Name'),
+  check('category')
     .notEmpty()
-    .withMessage("Catgeory ID Required")
+    .withMessage('Catgeory ID Required')
     .isMongoId()
-    .withMessage("Invalid Category ID"),
+    .withMessage('Invalid Category ID'),
   validatorMiddleWare,
 ];
 
 exports.updateSubCategoryValidator = [
-  check("id")
+  check('id')
     .notEmpty()
-    .withMessage("SubCategory id required")
+    .withMessage('SubCategory id required')
     .isMongoId()
-    .withMessage("Invalid Category ID Formate"),
-  check("name")
+    .withMessage('Invalid Category ID Formate'),
+  check('name')
     .notEmpty()
-    .withMessage("category Required")
+    .withMessage('category Required')
     .isLength({ min: 3 })
-    .withMessage("Too Short Name")
+    .withMessage('Too Short Name')
     .isLength({ max: 20 })
-    .withMessage("Too Long Name"),
+    .withMessage('Too Long Name'),
   validatorMiddleWare,
 ];
 
 exports.deleteSubCategoryValidator = [
-  check("id")
+  check('id')
     .notEmpty()
-    .withMessage("SubCategory id required")
+    .withMessage('SubCategory id required')
     .isMongoId()
-    .withMessage("Invalid Category ID Formate"),
+    .withMessage('Invalid Category ID Formate'),
   validatorMiddleWare,
 ];

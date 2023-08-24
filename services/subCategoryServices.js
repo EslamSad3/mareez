@@ -1,7 +1,7 @@
-const asyncHandler = require("express-async-handler");
-const slugify = require("slugify");
-const SubCategory = require("../models/subCategoryModel");
-const ApiError = require("../utils/apiError");
+const asyncHandler = require('express-async-handler');
+const slugify = require('slugify');
+const SubCategory = require('../models/subCategoryModel');
+const ApiError = require('../utils/apiError');
 
 exports.getCategoryidToBody = (req, res, next) => {
   // Nested Route
@@ -48,7 +48,7 @@ exports.getsubCategorires = asyncHandler(async (req, res) => {
   const subCategorires = await SubCategory.find(req.filterObj)
     .skip(skip)
     .limit(limit)
-    .populate({ path: "category", select: "name" }); // select: "name -_id" => no id
+    .populate({ path: 'category', select: 'name' }); // select: "name -_id" => no id
   res
     .status(200)
     .json({ results: subCategorires.length, page, data: subCategorires });
@@ -60,8 +60,8 @@ exports.getsubCategorires = asyncHandler(async (req, res) => {
 exports.getSubCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const subcategory = await SubCategory.findById(id).populate({
-    path: "category",
-    select: "name",
+    path: 'category',
+    select: 'name',
   });
   if (!subcategory) {
     return next(new ApiError(`No SubCategory For This id ${id}`, 404));

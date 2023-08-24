@@ -1,8 +1,7 @@
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
 
 dotenv.config();
-const mongoose = require("mongoose");
-
+const mongoose = require('mongoose');
 
 const dbConnection = () => {
   // connect to db
@@ -12,7 +11,7 @@ const dbConnection = () => {
       console.log(`DB Connectin :${conn.connection.host}`);
     })
     .catch((err) => {
-      console.log(err, "DB Error");
+      console.log(err, 'DB Error');
       process.exit(1);
     });
 };

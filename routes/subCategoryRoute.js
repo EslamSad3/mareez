@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 const {
   createsubCategory,
   getSubCategory,
@@ -6,22 +6,22 @@ const {
   updateSubCategory,
   deleteSubCategory,
   getCategoryidToBody,
-  createFilterObj
-} = require("../services/subCategoryServices");
+  createFilterObj,
+} = require('../services/subCategoryServices');
 const {
   createSubCategoryValidator,
   getSubCategoryValidator,
   updateSubCategoryValidator,
   deleteSubCategoryValidator,
-} = require("../utils/validators/subCategoryValidator ");
+} = require('../utils/validators/subCategoryValidator ');
 
-const router = express.Router({mergeParams: true});
+const router = express.Router({ mergeParams: true });
 router
-  .route("/")
-  .post(getCategoryidToBody,createSubCategoryValidator, createsubCategory)
-  .get(createFilterObj,getsubCategorires);
+  .route('/')
+  .post(getCategoryidToBody, createSubCategoryValidator, createsubCategory)
+  .get(createFilterObj, getsubCategorires);
 router
-  .route("/:id")
+  .route('/:id')
   .get(getSubCategoryValidator, getSubCategory)
   .put(updateSubCategoryValidator, updateSubCategory)
   .delete(deleteSubCategoryValidator, deleteSubCategory);
