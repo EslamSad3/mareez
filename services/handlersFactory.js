@@ -31,21 +31,25 @@ exports.getAll = (Model) =>
       .json({ results: collection.length, paginateResult, data: collection });
   });
 
+exports.create = (Model) =>
+  asyncHandler(async (req, res) => {
+    const collection = await Model.create(req.body);
+    res.status(201).json({ data: collection });
+  });
+
 exports.updateOne = (Model) =>
   asyncHandler(async (req, res, next) => {
-    const collection = await Model.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const collection = await Model.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     if (!collection) {
-      return next(new ApiError(`No collection For This id ${req.params.id}`, 404));
+      return next(
+        new ApiError(`No collection For This id ${req.params.id}`, 404)
+      );
     }
     res.status(200).json({ data: collection });
   });
 
-
-  
 exports.deleteOne = (Model) =>
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;

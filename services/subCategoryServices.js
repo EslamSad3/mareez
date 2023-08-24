@@ -14,15 +14,7 @@ exports.getCategoryidToBody = (req, res, next) => {
 // @desc      Create subCategory
 // @route     POST /api/subcategories
 // @access    private
-exports.createsubCategory = asyncHandler(async (req, res) => {
-  const { name, category } = req.body;
-  const subCategory = await SubCategory.create({
-    name,
-    slug: slugify(name),
-    category,
-  });
-  res.status(201).json({ data: subCategory });
-});
+exports.createsubCategory = factory.create(SubCategory);
 
 // Get subcategories by categoryid
 exports.createFilterObj = (req, res, next) => {

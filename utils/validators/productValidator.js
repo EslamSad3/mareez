@@ -1,11 +1,15 @@
 const slugify = require('slugify');
-const { check, body } = require('express-validator');
+const { check } = require('express-validator');
 const validatorMiddleWare = require('../../middlewares/validatorMiddleWare');
 const Category = require('../../models/categoryModel');
 const SubCategory = require('../../models/subCategoryModel');
 
 exports.createProductValidator = [
   check('title')
+    .custom((val, { req }) => {
+      req.body.slug = slugify(val);
+      return true;
+    })
     .isLength({ min: 3 })
     .withMessage('Too Short Product Name')
     .notEmpty()
@@ -65,7 +69,7 @@ exports.createProductValidator = [
       })
     ),
   check('brand').optional().isMongoId().withMessage('invalid brand id format'),
-  check('subcategory')
+  check('subcategories')
     .optional()
     .isMongoId()
     .withMessage('Invalid ID formate')
@@ -78,15 +82,15 @@ exports.createProductValidator = [
         }
       )
     )
-    .custom((subs, { req }) =>
+    .custom((val, { req }) =>
       SubCategory.find({ category: req.body.category }).then(
         (subcategories) => {
-          const subcategoriesIdsDB = [];
+          const subCategoriesIdsInDB = [];
           subcategories.forEach((subcategory) => {
-            subcategoriesIdsDB.push(subcategory._id.toString());
+            subCategoriesIdsInDB.push(subcategory._id.toString());
           });
-          const checker = subs.every((sub) => subcategoriesIdsDB.includes(sub));
-          if (!checker) {
+          const checker = (target, arr) => target.every((v) => arr.includes(v));
+          if (!checker(val, subCategoriesIdsInDB)) {
             return Promise.reject(
               new Error(`SubCategories not belonging to this category`)
             );
@@ -111,7 +115,7 @@ exports.getProductValidator = [
 
 exports.updateProductValidator = [
   check('id').isMongoId().withMessage('Invalid Product ID Formate'),
-  body('title')
+  check('title')
     .optional()
     .custom((val, { req }) => {
       req.body.slug = slugify(val);

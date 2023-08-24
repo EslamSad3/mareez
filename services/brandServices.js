@@ -8,11 +8,7 @@ const factory = require('./handlersFactory');
 // @desc      Create Brand
 // @route     POST /api/brands
 // @access    private
-exports.createBrand = asyncHandler(async (req, res) => {
-  const { name } = req.body;
-  const brand = await Brand.create({ name, slug: slugify(name) });
-  res.status(201).json({ data: brand });
-});
+exports.createBrand = factory.create(Brand)
 
 // @desc      Get Specific Brand by id
 // @route     GET /api/brands/:id
