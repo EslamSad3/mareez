@@ -39,7 +39,7 @@ exports.updateOne = (Model) =>
       { new: true }
     );
     if (!collection) {
-      return next(new ApiError(`No {collection} For This id ${req.params.id}`, 404));
+      return next(new ApiError(`No collection For This id ${req.params.id}`, 404));
     }
     res.status(200).json({ data: collection });
   });

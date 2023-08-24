@@ -28,18 +28,13 @@ exports.createSubCategoryValidator = [
 ];
 
 exports.updateSubCategoryValidator = [
-  check('id')
-    .notEmpty()
-    .withMessage('SubCategory id required')
-    .isMongoId()
-    .withMessage('Invalid Category ID Formate'),
-  check('name')
-    .notEmpty()
-    .withMessage('category Required')
-    .isLength({ min: 3 })
-    .withMessage('Too Short Name')
-    .isLength({ max: 20 })
-    .withMessage('Too Long Name'),
+  check('id').isMongoId().withMessage('Invalid SubCategory ID Formate'),
+  body('name')
+    .optional()
+    .custom((val, { req }) => {
+      req.body.slug = slugify(val);
+      return true;
+    }),
   validatorMiddleWare,
 ];
 
