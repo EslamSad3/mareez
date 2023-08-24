@@ -2,6 +2,8 @@ const asyncHandler = require('express-async-handler');
 const slugify = require('slugify');
 const Product = require('../models/productModel');
 const ApiError = require('../utils/apiError');
+const ApiFeatures = require('../utils/apiFeauters');
+const factory = require('./handlersFactory');
 
 // @desc      Create product
 // @route     POST /api/products
@@ -32,53 +34,24 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
 // @route     GET /api/products
 // @access    Public
 exports.getProducts = asyncHandler(async (req, res) => {
-  // 1- filtering
-  const queryStringObj = { ...req.query };
-  const excludedFileds = ['page', 'limit', 'skip', 'fields', 'sort'];
-  excludedFileds.forEach((filed) => {
-    delete queryStringObj[filed];
-  });
-
-  // mongoquery ==> {price :{$gte:50}, rating:{$gte:4}}
-  // Browser Query ==> {price :{gte:50}, rating:{gte:4}}
-
-  // Apply Filteration
-  let queryStr = JSON.stringify(queryStringObj);
-  queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-
-  // 2- pagaination
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 30;
-  const skip = (page - 1) * limit;
-
-  // Build mongoose query
-  let mongooseQuery = Product.find(JSON.parse(queryStr))
-    .skip(skip)
-    .limit(limit)
-    .populate([
-      { path: 'category', select: 'name' },
-      { path: 'subcategory', select: 'name' },
-      { path: 'brand', select: 'name' },
-    ]);
-
-  // 3-Sorting
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(',').join(' ');
-    mongooseQuery = mongooseQuery.sort(sortBy);
-  } else {
-    mongooseQuery = mongooseQuery.sort('-createdAt');
-  }
-
-  // 4- Fileds Limiting
-  if (req.query.fields) {
-    const fieldsBy = req.query.fields.split(',').join(' ');
-    console.log(fieldsBy);
-    mongooseQuery = mongooseQuery.select(fieldsBy);
-  }
-
-  // Excute mongoose query
-  const products = await mongooseQuery;
-  res.status(200).json({ results: products.length, page, data: products });
+  // Build query
+  const countDocuments = await Product.countDocuments();
+  const apiFeauters = new ApiFeatures(Product.find(), req.query)
+    .pagination(countDocuments)
+    .filter()
+    .search('Product')
+    .limitFields()
+    .sort();
+  // Excute query
+  const { mongooseQuery, paginateResult } = apiFeauters;
+  const products = await mongooseQuery.populate([
+    { path: 'category', select: 'name' },
+    { path: 'subcategory', select: 'name' },
+    { path: 'brand', select: 'name' },
+  ]);
+  res
+    .status(200)
+    .json({ results: products.length, paginateResult, data: products });
 });
 
 // @desc      Update product
@@ -100,11 +73,4 @@ exports.updateProduct = asyncHandler(async (req, res, next) => {
 // @desc      Delete product
 // @route     DELETE /api/products/:id
 // @access    private
-exports.deleteProduct = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const product = await Product.findByIdAndDelete(id);
-  if (!product) {
-    return next(new ApiError(`No product For This id ${id}`, 404));
-  }
-  res.status(204).send();
-});
+exports.deleteProduct = factory.deleteOne(Product);
