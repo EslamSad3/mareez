@@ -1,46 +1,59 @@
-const asyncHandler = require('express-async-handler');
+const multer = require('multer');
+const { v4 } = require('uuid');
 const Category = require('../models/categoryModel');
-const ApiError = require('../utils/apiError');
-const ApiFeatures = require('../utils/apiFeauters');
 const factory = require('./handlersFactory');
+const ApiError = require('../utils/apiError');
+
+// Disk Storage - anyFile
+
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, './uploads/categories');
+//   },
+//   filename: function (req, file, cb) {
+//     const ext = file.mimetype.split('/')[1];
+//     const date = new Date().toLocaleDateString().split('/').join('-');
+//     const filename = `Category-${date}-${v4()}.${ext}`;
+//     cb(null, filename);
+//   },
+// });
+
+// Disk Storage - Images Only
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads/categories');
+  },
+  filename: function (req, file, cb) {
+    const ext = file.mimetype.split('/')[1];
+    const date = new Date().toLocaleDateString().split('/').join('-');
+    const filename = `Category-${date}-${v4()}.${ext}`;
+    cb(null, filename);
+  },
+});
+const multerFIlter = function (req, file, cb) {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new ApiError('Only Images Allowed', 400), false);
+  }
+};
+const upload = multer({ storage: storage, fileFilter: multerFIlter });
+exports.uploadSingleImage = upload.single('image');
 
 // @desc      Create Category
 // @route     POST /api/categories
 // @access    private
-exports.createCategory =  factory.create(Category)
+exports.createCategory = factory.create(Category);
 
 // @desc      Get Specific Category by id
 // @route     GET /api/categories/:id
 // @access    Public
-exports.getCategory = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const category = await Category.findById(id);
-  if (!category) {
-    // res.status(404).json({ msg: `No Category For This id ${id}` })
-    return next(new ApiError(`No Category For This id ${id}`, 404));
-  }
-  res.status(200).json({ data: category });
-});
+exports.getCategory = factory.getOne(Category);
 
 // @desc      Get List Of Categories
 // @route     GET /api/categories
 // @access    Public
-exports.getCategories = asyncHandler(async (req, res) => {
-  // Build query
-  const countDocuments = await Category.countDocuments();
-  const apiFeauters = new ApiFeatures(Category.find(), req.query)
-    .pagination(countDocuments)
-    .filter()
-    .search()
-    .limitFields()
-    .sort();
-  // Excute query
-  const { mongooseQuery, paginateResult } = apiFeauters;
-  const categories = await mongooseQuery;
-  res
-    .status(200)
-    .json({ results: categories.length, paginateResult, data: categories });
-});
+exports.getCategories = factory.getAll(Category);
 
 // @desc      Update Category
 // @route     PUT /api/categories/:id

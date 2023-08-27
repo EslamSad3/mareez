@@ -79,5 +79,21 @@ const productShema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+productShema.pre(/^find/, function (next) {
+  this.populate([
+    { path: 'category', select: 'name' },
+    { path: 'subcategory', select: 'name' },
+    { path: 'brand', select: 'name' },
+  ]);
+  next();
+});
+productShema.pre(/^create/, function (next) {
+  this.populate([
+    { path: 'category', select: 'name' },
+    { path: 'subcategory', select: 'name' },
+    { path: 'brand', select: 'name' },
+  ]);
+  next();
+});
 
 module.exports = mongoose.model('product', productShema);

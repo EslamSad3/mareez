@@ -1,26 +1,33 @@
 const asyncHandler = require('express-async-handler');
-const slugify = require('slugify');
 const ApiError = require('../utils/apiError');
 const ApiFeatures = require('../utils/apiFeauters');
 
-exports.getOne = (Model) =>
+exports.getOne = (Model, populationOpt) =>
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const collection = await Model.findById(id);
+    let query = Model.findById(id);
+    if (populationOpt) {
+      query = query.populate(populationOpt);
+    }
+    const collection = await query;
     if (!collection) {
       return next(new ApiError(`No brand For This id ${id}`, 404));
     }
     res.status(200).json({ data: collection });
   });
 
-exports.getAll = (Model) =>
+exports.getAll = (Model, modelname = '') =>
   asyncHandler(async (req, res) => {
+    let filter = {};
+    if (req.filterObj) {
+      filter = req.filterObj;
+    }
     // Build query
     const countDocuments = await Model.countDocuments();
-    const apiFeauters = new ApiFeatures(Model.find(), req.query)
+    const apiFeauters = new ApiFeatures(Model.find(filter), req.query)
       .pagination(countDocuments)
       .filter()
-      .search()
+      .search(modelname)
       .limitFields()
       .sort();
     // Excute query
@@ -59,3 +66,9 @@ exports.deleteOne = (Model) =>
     }
     res.status(204).send();
   });
+
+// .populate([
+//   { path: 'category', select: 'name' },
+//   { path: 'subcategory', select: 'name' },
+//   { path: 'brand', select: 'name' },
+// ]);
