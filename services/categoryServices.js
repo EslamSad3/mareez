@@ -1,11 +1,13 @@
 const multer = require('multer');
 const { v4 } = require('uuid');
+const sharp = require('sharp');
+
 const Category = require('../models/categoryModel');
 const factory = require('./handlersFactory');
 const ApiError = require('../utils/apiError');
+const asyncHandler = require('express-async-handler');
 
-// Disk Storage - anyFile
-
+// Disk Storage - Images
 // const storage = multer.diskStorage({
 //   destination: function (req, file, cb) {
 //     cb(null, './uploads/categories');
@@ -17,19 +19,17 @@ const ApiError = require('../utils/apiError');
 //     cb(null, filename);
 //   },
 // });
+// const multerFIlter = function (req, file, cb) {
+//   if(file.mimetype.startsWith('image')){
+//     cb(null,true)
+//   } else{
+//     cb(new ApiError('Only Images Allowed',400),false)
+//   }
+// };
 
-// Disk Storage - Images Only
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './uploads/categories');
-  },
-  filename: function (req, file, cb) {
-    const ext = file.mimetype.split('/')[1];
-    const date = new Date().toLocaleDateString().split('/').join('-');
-    const filename = `Category-${date}-${v4()}.${ext}`;
-    cb(null, filename);
-  },
-});
+console.log('*****************************');
+// Memory Storage
+const storage = multer.memoryStorage();
 const multerFIlter = function (req, file, cb) {
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
@@ -39,6 +39,17 @@ const multerFIlter = function (req, file, cb) {
 };
 const upload = multer({ storage: storage, fileFilter: multerFIlter });
 exports.uploadSingleImage = upload.single('image');
+exports.resizeImage = asyncHandler(async (req, res, next) => {
+  const filename = `Category-${Date.now()}-${v4()}.jpeg`;
+  console.log(req.file);
+  await sharp(req.file.buffer)
+    .resize(600, 600)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`./uploads/categories/${filename}`);
+  req.body.image = filename;
+  next();
+});
 
 // @desc      Create Category
 // @route     POST /api/categories

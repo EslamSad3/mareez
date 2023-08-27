@@ -20,6 +20,6 @@ router.route('/').get(getBrands).post(createBrandValidator, createBrand);
 router
   .route('/:id')
   .get(getBrandValidator, getBrand)
-  .put(updateBrandValidator, updateBrand)
+  .patch(updateBrandValidator, updateBrand)
   .delete(deleteBrandValidator, deleteBrand);
 module.exports = router;

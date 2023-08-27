@@ -23,7 +23,7 @@ router
 router
   .route('/:id')
   .get(getSubCategoryValidator, getSubCategory)
-  .put(updateSubCategoryValidator, updateSubCategory)
+  .patch(updateSubCategoryValidator, updateSubCategory)
   .delete(deleteSubCategoryValidator, deleteSubCategory);
 
 module.exports = router;
