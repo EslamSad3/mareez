@@ -5,7 +5,6 @@ const asyncHandler = require('express-async-handler');
 const { uploadSingleImage } = require('../middlewares/uploadImagesMiddleWare');
 const { v4 } = require('uuid');
 const sharp = require('sharp');
-const { resizeImage } = require('../middlewares/resizeImageMiddleWare');
 
 
 
