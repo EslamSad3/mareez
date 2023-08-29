@@ -30,6 +30,11 @@ router
 router
   .route('/:id')
   .get(getProductValidator, getProduct)
-  .patch(updateProductValidator, updateProduct)
+  .patch(
+    uploadProductImages,
+    resizeProductImages,
+    updateProductValidator,
+    updateProduct
+  )
   .delete(deleteProductValidator, deleteProduct);
 module.exports = router;

@@ -96,29 +96,27 @@ productShema.pre(/^create/, function (next) {
   next();
 });
 
-// const setImageToUrl = (doc) => {
-//   if (doc.imageCover) {
-//     const imageUrl = `${process.env.BASE_URL}/products/${doc.imageCover}`;
-//     doc.imageCover = imageUrl;
-//   }
-// };
+const setImageToUrl = (doc) => {
+  if (doc.imageCover) {
+    const imageUrl = `${process.env.BASE_URL}/products/${doc.imageCover}`;
+    doc.imageCover = imageUrl;
+  }
+  if (doc.images) {
+    const imagesList = [];
+    doc.images.forEach((image) => {
+      const imageUrl = `${process.env.BASE_URL}/products/${image}`;
+     imagesList.push(imageUrl);
+    });
+    doc.images = imagesList;
+  }
+};
 
-// const setImagesToUrl = (doc) => {
-//   if (doc.images) {
-//     doc.images.forEach((image) => {
-//       const imageUrl = `${process.env.BASE_URL}/products/${image}`;
-//       doc.images.push(imageUrl);
-//     });
-//   }
-// };
 
-// productShema.post('init', (doc) => {
-//   setImageToUrl(doc);
-//   setImagesToUrl(doc);
-// });
-// productShema.post('save', (doc) => {
-//   setImageToUrl(doc);
-//   setImagesToUrl(doc);
-// });
+productShema.post('init', (doc) => {
+  setImageToUrl(doc);
+});
+productShema.post('save', (doc) => {
+  setImageToUrl(doc);
+});
 
 module.exports = mongoose.model('product', productShema);

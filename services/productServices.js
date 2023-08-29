@@ -26,21 +26,20 @@ exports.uploadProductImages = upload.fields([
 ]);
 
 exports.resizeProductImages = asyncHandler(async (req, res, next) => {
-  const imageCoverfilename = `Products-${Date.now()}-${v4()}-cover.jpeg`;
   // image cover
   if (req.files.imageCover) {
+    const imageCoverfilename = `Products-${Date.now()}-${v4()}-cover.jpeg`;
     await sharp(req.files.imageCover[0].buffer)
       .resize(2000, 1333)
       .toFormat('jpeg')
       .jpeg({ quality: 90 })
       .toFile(`./uploads/products/${imageCoverfilename}`);
     req.body.imageCover = imageCoverfilename;
-    next();
   }
   // if (req.files.images) {
   //   req.body.images = [];
   //   for (let i = 0; i < req.files.images.length; i++) {
-  //     const imagesfilename = `Products-${Date.now()}-${v4()}-${i}.jpeg`;
+  //     const imagesfilename = `Products-${Date.now()}-${v4()}-${i+1}.jpeg`;
   //     await sharp(req.files.images[i].buffer)
   //       .resize(600, 600)
   //       .toFormat('jpeg')
