@@ -25,11 +25,30 @@ const userSchema = new mongoose.Schema(
       minlenght: [6, 'Too Short password'],
     },
     role: {
-      typeof: String,
-      enum: ['admin', 'user', 'seller'],
-      default: 'user',
+      type: String,
+      enum: ["user", "admin", "seller"],
+      default: "user",
+    },
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true }
 );
+
+const setImageTOUrl = (doc)=>{
+if(doc.profileImg){
+  const imgUrl = `${process.env.BASE_URL}/users/${doc.profileImg}`
+  doc.profileImg = imgUrl
+}
+}
+userSchema.post('init',(doc)=>{
+  setImageTOUrl(doc)
+})
+userSchema.post('save',(doc)=>{
+  setImageTOUrl(doc)
+})
+
+
 module.exports = mongoose.model('user', userSchema);
