@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema(
   {
@@ -26,8 +27,8 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin", "seller"],
-      default: "user",
+      enum: ['user', 'admin', 'seller'],
+      default: 'user',
     },
     active: {
       type: Boolean,
@@ -37,18 +38,23 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const setImageTOUrl = (doc)=>{
-if(doc.profileImg){
-  const imgUrl = `${process.env.BASE_URL}/users/${doc.profileImg}`
-  doc.profileImg = imgUrl
-}
-}
-userSchema.post('init',(doc)=>{
-  setImageTOUrl(doc)
-})
-userSchema.post('save',(doc)=>{
-  setImageTOUrl(doc)
-})
+const setImageTOUrl = (doc) => {
+  if (doc.profileImg) {
+    const imgUrl = `${process.env.BASE_URL}/users/${doc.profileImg}`;
+    doc.profileImg = imgUrl;
+  }
+};
+userSchema.post('init', (doc) => {
+  setImageTOUrl(doc);
+});
+userSchema.post('save', (doc) => {
+  setImageTOUrl(doc);
+});
 
-
+userSchema.pre('save', async function (next) {
+  // Hashing Password
+  if (!this.isModified('password')) return next(); // no need to hash password if it was NOT modified
+  this.password = await bcrypt.hash(this.password, 12);
+  next();
+});
 module.exports = mongoose.model('user', userSchema);

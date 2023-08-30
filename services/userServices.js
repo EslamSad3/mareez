@@ -5,6 +5,8 @@ const asyncHandler = require('express-async-handler');
 const { uploadSingleImage } = require('../middlewares/uploadImagesMiddleWare');
 const { v4 } = require('uuid');
 const sharp = require('sharp');
+const ApiError = require('../utils/apiError');
+const bcrypt = require('bcryptjs');
 
 exports.uploadUserImage = uploadSingleImage('profileImg');
 exports.resizeUserImage = asyncHandler(async (req, res, next) => {
@@ -16,8 +18,8 @@ exports.resizeUserImage = asyncHandler(async (req, res, next) => {
       .jpeg({ quality: 90 })
       .toFile(`./uploads/users/${filename}`);
     req.body.profileImg = filename;
-}
-next();
+  }
+  next();
 });
 
 // @desc      Create User
@@ -38,7 +40,46 @@ exports.getUsers = factory.getAll(User);
 // @desc      Update User
 // @route     PUT /api/users/:id
 // @access    private
-exports.updateUser = factory.updateOne(User);
+exports.updateUser = asyncHandler(async (req, res, next) => {
+  const collection = await User.findByIdAndUpdate(
+    req.params.id,
+    {
+      name: req.body.name,
+      slug: req.body.slug,
+      phone: req.body.phone,
+      email: req.body.email,
+      profileImg: req.body.profileImg,
+      role: req.body.role,
+    },
+    {
+      new: true,
+    }
+  );
+  if (!collection) {
+    return next(
+      new ApiError(`No collection For This id ${req.params.id}`, 404)
+    );
+  }
+  res.status(200).json({ data: collection });
+});
+
+exports.updateUserPassword = asyncHandler(async (req, res, next) => {
+  const collection = await User.findByIdAndUpdate(
+    req.params.id,
+    {
+      password: await bcrypt.hash(req.body.password, 12),
+    },
+    {
+      new: true,
+    }
+  );
+  if (!collection) {
+    return next(
+      new ApiError(`No collection For This id ${req.params.id}`, 404)
+    );
+  }
+  res.status(200).json({ data: collection });
+});
 
 // @desc      Delete User
 // @route     DELETE /api/users/:id
