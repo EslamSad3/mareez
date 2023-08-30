@@ -14,6 +14,7 @@ const {
   createUserValidator,
   getUserValidator,
   updateUserValidator,
+  updateUserPasswordValidator,
   deleteUserValidator,
 } = require('../utils/validators/userValidators');
 
@@ -24,7 +25,9 @@ router
   .get(getUsers)
   .post(uploadUserImage, resizeUserImage, createUserValidator, createUser);
 
-router.route('/change-password/:id').patch(updateUserPassword);
+router
+  .route('/change-password/:id')
+  .patch(updateUserPasswordValidator, updateUserPassword);
 router
   .route('/:id')
   .get(getUserValidator, getUser)
