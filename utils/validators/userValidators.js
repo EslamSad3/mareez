@@ -66,6 +66,27 @@ exports.updateUserValidator = [
       req.body.slug = slugify(val);
       return true;
     }),
+  check('email')
+    .optional()
+    .isEmail()
+    .withMessage('Invalid Email')
+    .custom(async (val) => {
+      const user = await User.findOne({ email: val });
+      if (user) {
+        return Promise.reject(new Error('Email or phone Already Exists'));
+      }
+    }),
+  check('phone')
+    .optional()
+    .isMobilePhone(['ar-EG', 'ar-SA', 'ar-AE'])
+    .withMessage('invalid phone number')
+    .custom(async (val) => {
+      const user = await User.findOne({ phone: val });
+      if (user) {
+        return Promise.reject(new Error('Email or phone Already Exists'));
+      }
+    }),
+  check('profileImage').optional(),
   validatorMiddleWare,
 ];
 
