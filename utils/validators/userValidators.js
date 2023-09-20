@@ -46,7 +46,7 @@ exports.createUserValidator = [
   check('confirmPassword').notEmpty().withMessage('Confirm Password Required'),
   check('phone')
     .optional()
-    .isMobilePhone('ar-SA')
+    .isMobilePhone(['ar-SA','ar-EG'])
     .withMessage('invalid phone number')
     .custom(async (val) => {
       const user = await User.findOne({ phone: val });
