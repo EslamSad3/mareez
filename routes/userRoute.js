@@ -1,4 +1,5 @@
 const express = require('express');
+const auth = require('../services/authServices');
 
 // Services
 const {
@@ -25,15 +26,35 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(getUsers)
-  .post(uploadUserImage, resizeUserImage, createUserValidator, createUser);
+  .get(auth.protect, auth.allowedTo('admin'), getUsers)
+  .post(
+    auth.protect,
+    auth.allowedTo('admin'),
+    uploadUserImage,
+    resizeUserImage,
+    createUserValidator,
+    createUser
+  );
 
 router
   .route('/change-password/:id')
   .patch(updateUserPasswordValidator, updateUserPassword);
+
 router
   .route('/:id')
-  .get(getUserValidator, getUser)
-  .patch(uploadUserImage, resizeUserImage, updateUserValidator, updateUser)
-  .delete(deleteUserValidator, deleteUser);
+  .get(auth.protect, auth.allowedTo('admin'), getUserValidator, getUser)
+  .patch(
+    auth.protect,
+    auth.allowedTo('admin'),
+    uploadUserImage,
+    resizeUserImage,
+    updateUserValidator,
+    updateUser
+  )
+  .delete(
+    auth.protect,
+    auth.allowedTo('admin'),
+    deleteUserValidator,
+    deleteUser
+  );
 module.exports = router;

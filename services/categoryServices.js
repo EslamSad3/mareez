@@ -5,20 +5,20 @@ const { uploadSingleImage } = require('../middlewares/uploadImagesMiddleWare');
 const { v4 } = require('uuid');
 const sharp = require('sharp');
 
-
 exports.uploadCategoryImage = uploadSingleImage('image');
 
 exports.resizeCategoryImage = asyncHandler(async (req, res, next) => {
   const filename = `Category-${Date.now()}-${v4()}.jpeg`;
-  await sharp(req.file.buffer)
-    .resize(600, 600)
-    .toFormat('jpeg')
-    .jpeg({ quality: 90 })
-    .toFile(`./uploads/categories/${filename}`);
-  req.body.image = filename;
+  if (req.file) {
+    await sharp(req.file.buffer)
+      .resize(600, 600)
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(`./uploads/categories/${filename}`);
+    req.body.image = filename;
+  }
   next();
 });
-
 
 // @desc      Create Category
 // @route     POST /api/categories
