@@ -1,5 +1,6 @@
 const express = require('express');
 
+// Services
 const {
   createUser,
   getUsers,
@@ -10,6 +11,8 @@ const {
   uploadUserImage,
   resizeUserImage,
 } = require('../services/userServices');
+
+// Validators
 const {
   createUserValidator,
   getUserValidator,
