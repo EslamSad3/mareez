@@ -46,15 +46,16 @@ exports.createUserValidator = [
   check('confirmPassword').notEmpty().withMessage('Confirm Password Required'),
   check('phone')
     .optional()
-    .isMobilePhone(['ar-EG', 'ar-SA', 'ar-AE'])
+    .isMobilePhone('ar-SA')
     .withMessage('invalid phone number')
     .custom(async (val) => {
       const user = await User.findOne({ phone: val });
       if (user) {
-        return Promise.reject(new Error('Email or phone Already Exists'));
+        return Promise.reject(new Error('phone Already Exists'));
       }
     }),
   check('profileImage').optional(),
+  check('role').optional(),
   validatorMiddleWare,
 ];
 
