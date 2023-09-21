@@ -1,7 +1,6 @@
 const express = require('express');
 // Services
 const {
-  getLoggedUserData,
   createUser,
   getUsers,
   getUser,
@@ -10,6 +9,11 @@ const {
   deleteUser,
   uploadUserImage,
   resizeUserImage,
+  getLoggedUserData,
+  changeLoggedUserPassword,
+  updateProfile,
+  deActivateProfile,
+  // reActivateProfile,
 } = require('../services/userServices');
 const auth = require('../services/authServices');
 // Validators
@@ -19,15 +23,20 @@ const {
   updateUserValidator,
   updateUserPasswordValidator,
   deleteUserValidator,
+  updateLoggedUserValidator,
 } = require('../utils/validators/userValidators');
 const router = express.Router();
 
 // User Routes
-
-router.get('/my-details', auth.protect, getLoggedUserData, getUser);
+router.use(auth.protect)
+router.get('/my-details', getLoggedUserData, getUser);
+router.patch('/change-password', changeLoggedUserPassword);
+router.patch('/update-profile', updateLoggedUserValidator, updateProfile);
+router.delete('/dactivate-profile', deActivateProfile);
+// router.patch('/ractivate-profile', reActivateProfile);
 
 // Admin routes
-router.use(auth.protect, auth.allowedTo('admin'));
+router.use(auth.protect,auth.allowedTo('admin'));
 router
   .route('/change-password/:id')
   .patch(updateUserPasswordValidator, updateUserPassword);

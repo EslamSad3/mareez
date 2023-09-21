@@ -4,6 +4,9 @@ const { check } = require('express-validator');
 const validatorMiddleWare = require('../../middlewares/validatorMiddleWare');
 const bcrypt = require('bcryptjs');
 
+
+// Admin
+
 exports.getUserValidator = [
   check('id').isMongoId().withMessage('Invalid User ID Formate'),
   validatorMiddleWare,
@@ -46,7 +49,7 @@ exports.createUserValidator = [
   check('confirmPassword').notEmpty().withMessage('Confirm Password Required'),
   check('phone')
     .optional()
-    .isMobilePhone(['ar-SA','ar-EG'])
+    .isMobilePhone(['ar-SA', 'ar-EG'])
     .withMessage('invalid phone number')
     .custom(async (val) => {
       const user = await User.findOne({ phone: val });
@@ -88,6 +91,7 @@ exports.updateUserValidator = [
       }
     }),
   check('profileImage').optional(),
+  check('role').optional(),
   validatorMiddleWare,
 ];
 
@@ -125,5 +129,68 @@ exports.updateUserPasswordValidator = [
 
 exports.deleteUserValidator = [
   check('id').isMongoId().withMessage('Invalid User ID Formate'),
+  validatorMiddleWare,
+];
+
+// User
+
+exports.ChangeUserPasswordValidator = [
+  check('currentPassword').notEmpty().withMessage('Current Password Required'),
+  check('password')
+    .notEmpty()
+    .withMessage('new Password Required')
+    .custom(async (val, { req }) => {
+      // verfiy current password
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        throw new Error('User Not Found');
+      }
+      const isMatch = await bcrypt.compare(
+        req.body.currentPassword,
+        user.password
+      );
+      if (!isMatch) {
+        throw new Error('Current Password is incorrect');
+      }
+
+      // verfiy password confirm
+      if (val !== req.body.confirmPassword) {
+        throw new Error('Passwords do not match');
+      }
+      return true;
+    }),
+  check('confirmPassword')
+    .notEmpty()
+    .withMessage('confirm new Password Required'),
+  validatorMiddleWare,
+];
+
+exports.updateLoggedUserValidator = [
+  check('name')
+    .optional()
+    .custom((val, { req }) => {
+      req.body.slug = slugify(val);
+      return true;
+    }),
+  check('email')
+    .optional()
+    .isEmail()
+    .withMessage('Invalid Email')
+    .custom(async (val) => {
+      const user = await User.findOne({ email: val });
+      if (user) {
+        return Promise.reject(new Error('Email or phone Already Exists'));
+      }
+    }),
+  check('phone')
+    .optional()
+    .isMobilePhone(['ar-EG', 'ar-SA', 'ar-AE'])
+    .withMessage('invalid phone number')
+    .custom(async (val) => {
+      const user = await User.findOne({ phone: val });
+      if (user) {
+        return Promise.reject(new Error('Email or phone Already Exists'));
+      }
+    }),
   validatorMiddleWare,
 ];

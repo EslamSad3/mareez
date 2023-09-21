@@ -7,6 +7,7 @@ const { v4 } = require('uuid');
 const sharp = require('sharp');
 const ApiError = require('../utils/apiError');
 const bcrypt = require('bcryptjs');
+const { createToken } = require('../utils/createToken');
 
 exports.uploadUserImage = uploadSingleImage('profileImg');
 exports.resizeUserImage = asyncHandler(async (req, res, next) => {
@@ -21,6 +22,10 @@ exports.resizeUserImage = asyncHandler(async (req, res, next) => {
   }
   next();
 });
+
+//  Admin Services
+
+//  ################################################
 
 // @desc      Create User
 // @route     POST /api/users
@@ -63,12 +68,16 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
   res.status(200).json({ data: collection });
 });
 
+// @desc      Update User Password
+// @route     PUT /api/users/change-password/:id
+// @access    private
+
 exports.updateUserPassword = asyncHandler(async (req, res, next) => {
   const collection = await User.findByIdAndUpdate(
     req.params.id,
     {
       password: await bcrypt.hash(req.body.password, 12),
-      passwordChangedAt : Date.now()
+      passwordChangedAt: Date.now(),
     },
     {
       new: true,
@@ -88,12 +97,75 @@ exports.updateUserPassword = asyncHandler(async (req, res, next) => {
 
 exports.deleteUser = factory.deleteOne(User);
 
+// #############################################
+
+//  User Services
 
 // @desc      Logged in user Data
-// @route     GET /api/auth/my-details
+// @route     GET /api/users/my-details
 // @access    Public/protect
 
-exports.getLoggedUserData = asyncHandler(async (req, res, next) =>{
+exports.getLoggedUserData = asyncHandler(async (req, res, next) => {
   req.params.id = req.user._id;
-  next()
-})
+  next();
+});
+
+// @desc      Update Logged in user Password
+// @route     PATCH /api/users/update-password
+// @access    Public/protect
+
+exports.changeLoggedUserPassword = asyncHandler(async (req, res, next) => {
+  // 1- update User Password Based on User Payload ( req.user._id)
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      password: await bcrypt.hash(req.body.password, 12),
+      passwordChangedAt: Date.now(),
+    },
+    {
+      new: true,
+    }
+  );
+  // 2- Generate User Token
+  const token = createToken(user._id);
+  res.status(200).json({ data: user, token });
+});
+
+// @desc      Update Logged in user profile (without password, role)
+// @route     PATCH /api/users/update-profile
+// @access    Public/protect
+
+exports.updateProfile = asyncHandler(async (req, res, next) => {
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+      // profileImg: req.body.profileImg,
+    },
+    { new: true }
+  );
+  res.status(200).json({ data: updatedUser });
+});
+
+// @desc      Deactivate Logged in user
+// @route     DELETE /api/users/dactivate-profile
+// @access    Public/protect
+
+exports.deActivateProfile = asyncHandler(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user._id, {
+    active: false,
+  });
+  res.status(204).send();
+});
+
+// // @desc      Reactivate deactivated user
+// // @route     PATCH /api/users/reactivate-profile
+// // @access    Public/protect
+// exports.reActivateProfile = asyncHandler(async (req, res, next) => {
+//   await User.findById(req.user._id, {
+//     active: true,
+//   });
+//   res.status(200).json({ success: 'Account ReActivated' });
+// });
