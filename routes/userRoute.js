@@ -1,6 +1,4 @@
 const express = require('express');
-const auth = require('../services/authServices');
-
 // Services
 const {
   createUser,
@@ -12,6 +10,7 @@ const {
   uploadUserImage,
   resizeUserImage,
 } = require('../services/userServices');
+const auth = require('../services/authServices');
 
 // Validators
 const {
@@ -23,38 +22,19 @@ const {
 } = require('../utils/validators/userValidators');
 
 const router = express.Router();
-
-router
-  .route('/')
-  .get(auth.protect, auth.allowedTo('admin'), getUsers)
-  .post(
-    auth.protect,
-    auth.allowedTo('admin'),
-    uploadUserImage,
-    resizeUserImage,
-    createUserValidator,
-    createUser
-  );
-
 router
   .route('/change-password/:id')
   .patch(updateUserPasswordValidator, updateUserPassword);
 
+router.use(auth.protect, auth.allowedTo('admin'));
+router
+  .route('/')
+  .get(getUsers)
+  .post(uploadUserImage, resizeUserImage, createUserValidator, createUser);
+
 router
   .route('/:id')
-  .get(auth.protect, auth.allowedTo('admin'), getUserValidator, getUser)
-  .patch(
-    auth.protect,
-    auth.allowedTo('admin'),
-    uploadUserImage,
-    resizeUserImage,
-    updateUserValidator,
-    updateUser
-  )
-  .delete(
-    auth.protect,
-    auth.allowedTo('admin'),
-    deleteUserValidator,
-    deleteUser
-  );
+  .get(getUserValidator, getUser)
+  .patch(uploadUserImage, resizeUserImage, updateUserValidator, updateUser)
+  .delete(deleteUserValidator, deleteUser);
 module.exports = router;
