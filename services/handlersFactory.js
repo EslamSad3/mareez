@@ -11,7 +11,7 @@ exports.getOne = (Model, populationOpt) =>
     }
     const collection = await query;
     if (!collection) {
-      return next(new ApiError(`No brand For This id ${id}`, 404));
+      return next(new ApiError(`No collection For This id ${id}`, 404));
     }
     res.status(200).json({ data: collection });
   });
