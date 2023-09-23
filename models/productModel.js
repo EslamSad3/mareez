@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const productShema = new mongoose.Schema(
   {
     title: {
@@ -123,4 +124,5 @@ productShema.virtual('reviews', {
   foreignField: 'product',
   localField: '_id',
 });
+
 module.exports = mongoose.model('product', productShema);

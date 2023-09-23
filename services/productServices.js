@@ -1,10 +1,11 @@
-
 const Product = require('../models/productModel');
 const factory = require('./handlersFactory');
 const sharp = require('sharp');
 const { v4 } = require('uuid');
 const asyncHandler = require('express-async-handler');
-const {uploadMultipleImages} = require('../middlewares/uploadImagesMiddleWare')
+const {
+  uploadMultipleImages,
+} = require('../middlewares/uploadImagesMiddleWare');
 // upload images
 
 exports.uploadProductImages = uploadMultipleImages([
@@ -70,7 +71,7 @@ exports.getProduct = factory.getOne(Product, [
   { path: 'category', select: 'name' },
   { path: 'subcategory', select: 'name' },
   { path: 'brand', select: 'name' },
-  { path: 'reviews'},
+  { path: 'reviews' },
 ]);
 
 // @desc      Get List Of products
@@ -93,3 +94,8 @@ exports.deleteProduct = factory.deleteOne(Product);
 //   { path: 'subcategory', select: 'name' },
 //   { path: 'brand', select: 'name' },
 // ]);
+
+exports.averageRatings = Product.aggregate([
+  { $match: { reviews: [] } },
+  { $group: { _id: '__id', total: { $sum: '$rating' } } },
+]);

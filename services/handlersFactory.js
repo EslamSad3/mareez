@@ -54,13 +54,14 @@ exports.updateOne = (Model) =>
         new ApiError(`No collection For This id ${req.params.id}`, 404)
       );
     }
+    collection.save();
     res.status(200).json({ data: collection });
   });
 
 exports.deleteOne = (Model) =>
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const collection = await Model.findByIdAndDelete(id);
+    const collection = await Model.findOneAndDelete(id);
     if (!collection) {
       return next(new ApiError(`No collection For This id ${id}`, 404));
     }
