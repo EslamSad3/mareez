@@ -8,6 +8,12 @@ const {
   updateReview,
   deleteReview,
 } = require('../services/reviewServices');
+const {
+  createReviewValidator,
+  updateReviewValidator,
+  deleteReviewValidator,
+  getReviewValidator,
+} = require('../utils/validators/reviewValidator');
 // const {
 //   getReviewValidator,
 //   createBrandValidator,
@@ -20,10 +26,25 @@ const router = express.Router();
 router
   .route('/')
   .get(getReviews)
-  .post(auth.protect, auth.allowedTo('user'), createReview);
+  .post(
+    auth.protect,
+    auth.allowedTo('user'),
+    createReviewValidator,
+    createReview
+  );
 router
   .route('/:id')
-  .get(getReview)
-  .patch(auth.protect,auth.allowedTo('admin',"user"),updateReview)
-  .delete(auth.protect,auth.allowedTo('admin',"user"), deleteReview);
+  .get(getReviewValidator, getReview)
+  .patch(
+    auth.protect,
+    auth.allowedTo('admin', 'user'),
+    updateReviewValidator,
+    updateReview
+  )
+  .delete(
+    auth.protect,
+    auth.allowedTo('admin', 'user'),
+    deleteReviewValidator,
+    deleteReview
+  );
 module.exports = router;
