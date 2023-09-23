@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
     passwordChangedAt: Date,
     passwordResetCode: String,
     passwordResetExpires: Date,
-    passwordResetVerified:Boolean,
+    passwordResetVerified: Boolean,
     role: {
       type: String,
       enum: ['user', 'admin', 'seller'],
@@ -38,6 +38,13 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    // child referance (one to many) // one user to many products
+    wishlist: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'product',
+      },
+    ],
   },
   { timestamps: true }
 );

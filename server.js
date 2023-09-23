@@ -14,6 +14,7 @@ const subCategoryRoute = require('./routes/subCategoryRoute');
 const brandRoute = require('./routes/brandRoute');
 const productRoute = require('./routes/productRoute');
 const reviewRoute = require('./routes/reviewRoute');
+const wishListRoute = require('./routes/wishListRoute');
 const userRoute = require('./routes/userRoute');
 const authRoute = require('./routes/authRoute');
 
@@ -32,6 +33,7 @@ app.use('/api/subcategories', subCategoryRoute);
 app.use('/api/brands', brandRoute);
 app.use('/api/products', productRoute);
 app.use('/api/reviews', reviewRoute);
+app.use('/api/wishlist', wishListRoute);
 app.use('/api/users', userRoute);
 app.use('/api/auth', authRoute);
 
