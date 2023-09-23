@@ -2,6 +2,24 @@ const Review = require('../models/reviewModel');
 const factory = require('./handlersFactory');
 
 
+
+
+// Get subcategories by categoryid
+exports.createFilterObj = (req, res, next) => {
+    const filterObj = req.params.productid
+      ? { product: req.params.productid }
+      : {};
+    req.filterObj = filterObj;
+    next();
+  };
+
+
+  exports.setProductidAndUserToBody = (req, res, next) => {
+    // Nested Route
+    if (!req.body.product) req.body.product = req.params.productid;
+    if (!req.body.user) req.body.user = req.user._id;
+    next();
+  };
 // @desc      Create Review
 // @route     POST /api/reviews
 // @access    Private/protect/user

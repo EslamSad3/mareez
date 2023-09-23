@@ -7,7 +7,7 @@ const {
   getsubCategorires,
   updateSubCategory,
   deleteSubCategory,
-  getCategoryidToBody,
+  setCategoryidToBody,
   createFilterObj,
   uploadSubCategoryImage,
   resizeSubCategoryImage,
@@ -25,7 +25,7 @@ router
   .post(
     auth.protect,
     auth.allowedTo('admin'),
-    getCategoryidToBody,
+    setCategoryidToBody,
     uploadSubCategoryImage,
     resizeSubCategoryImage,
     createSubCategoryValidator,

@@ -5,7 +5,7 @@ const sharp = require('sharp');
 const asyncHandler = require('express-async-handler');
 const SubCategory = require('../models/subCategoryModel');
 
-exports.getCategoryidToBody = (req, res, next) => {
+exports.setCategoryidToBody = (req, res, next) => {
   // Nested Route
   if (!req.body.category) req.body.category = req.params.categoryid;
   next();

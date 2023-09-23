@@ -57,7 +57,8 @@ exports.updateReviewValidator = [
       // check before updating
       const review = await Review.findById(val);
       if (!review) return Promise.reject(new Error('No Review for this ID'));
-      if (review.user.toString() !== req.user._id.toString()) {
+      if (!review.user._id.equals(req.user._id)) {
+        //  or review.user._id.toString() !== req.user._id.toString()
         return Promise.reject(
           new Error("You're not allowed to access this action")
         );
@@ -76,13 +77,13 @@ exports.deleteReviewValidator = [
       if (req.user.role === 'user') {
         const review = await Review.findById(val);
         if (!review) return Promise.reject(new Error('No Review for this ID'));
-        if (review.user.toString() !== req.user._id.toString()) {
+        if (review.user._id.toString() !== req.user._id.toString()) {
           return Promise.reject(
             new Error("You're not allowed to access this action")
           );
         }
       }
-      return true
+      return true;
     }),
   validatorMiddleWare,
 ];

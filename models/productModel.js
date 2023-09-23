@@ -77,7 +77,7 @@ const productShema = new mongoose.Schema(
       default: 0,
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 productShema.pre(/^find/, function (next) {
   this.populate([
@@ -105,12 +105,11 @@ const setImageToUrl = (doc) => {
     const imagesList = [];
     doc.images.forEach((image) => {
       const imageUrl = `${process.env.BASE_URL}/products/${image}`;
-     imagesList.push(imageUrl);
+      imagesList.push(imageUrl);
     });
     doc.images = imagesList;
   }
 };
-
 
 productShema.post('init', (doc) => {
   setImageToUrl(doc);
@@ -119,4 +118,9 @@ productShema.post('save', (doc) => {
   setImageToUrl(doc);
 });
 
+productShema.virtual('reviews', {
+  ref: 'review',
+  foreignField: 'product',
+  localField: '_id',
+});
 module.exports = mongoose.model('product', productShema);

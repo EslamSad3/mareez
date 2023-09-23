@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const reviewSchema = new mongoose.Schema(
   {
-    title: {
+    name: {
       type: 'string',
     },
     rating: {
@@ -12,7 +12,7 @@ const reviewSchema = new mongoose.Schema(
     },
     user: {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
+      ref: 'user',
       required: [true, 'review Must belong to user'],
     },
     product: {
@@ -22,5 +22,12 @@ const reviewSchema = new mongoose.Schema(
     },
   },
   { timestamps: true }
+);
+
+reviewSchema.pre(/^find/, function (next) {
+  this.populate({ path: 'user' , select: 'name' });
+  next();
+}
+
 );
 module.exports = mongoose.model('review', reviewSchema);
