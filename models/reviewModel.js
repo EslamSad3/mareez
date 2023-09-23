@@ -43,7 +43,6 @@ reviewSchema.statics.averageRatingAndQuantity = async function (productId) {
       },
     },
   ]);
-  console.log(result);
   if (result.length > 0) {
     await Product.findByIdAndUpdate(productId, {
       rating: result[0].averageRating,
