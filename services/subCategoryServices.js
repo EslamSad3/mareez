@@ -50,7 +50,7 @@ exports.getsubCategorires = factory.getAll(SubCategory);
 // @access    Public
 exports.getSubCategory = factory.getOne(SubCategory);
 // @desc      Update subCategory
-// @route     PUT /api/subcategories/:id
+// @route     PATCH /api/subcategories/:id
 // @access    private
 exports.updateSubCategory = factory.updateOne(SubCategory);
 

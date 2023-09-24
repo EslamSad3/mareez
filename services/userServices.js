@@ -43,7 +43,7 @@ exports.getUser = factory.getOne(User);
 exports.getUsers = factory.getAll(User);
 
 // @desc      Update User
-// @route     PUT /api/users/:id
+// @route     PATCH /api/users/:id
 // @access    private
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const collection = await User.findByIdAndUpdate(

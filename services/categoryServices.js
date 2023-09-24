@@ -36,7 +36,7 @@ exports.getCategory = factory.getOne(Category);
 exports.getCategories = factory.getAll(Category);
 
 // @desc      Update Category
-// @route     PUT /api/categories/:id
+// @route     PATCH /api/categories/:id
 // @access    private
 exports.updateCategory = factory.updateOne(Category);
 

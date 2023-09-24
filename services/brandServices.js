@@ -37,7 +37,7 @@ exports.getBrand = factory.getOne(Brand);
 exports.getBrands = factory.getAll(Brand);
 
 // @desc      Update Brand
-// @route     PUT /api/brands/:id
+// @route     PATCH /api/brands/:id
 // @access    private
 exports.updateBrand = factory.updateOne(Brand);
 

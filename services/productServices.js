@@ -80,7 +80,7 @@ exports.getProduct = factory.getOne(Product, [
 exports.getProducts = factory.getAll(Product, 'Product');
 
 // @desc      Update product
-// @route     PUT /api/products/:id
+// @route     PATCH /api/products/:id
 // @access    private
 exports.updateProduct = factory.updateOne(Product);
 

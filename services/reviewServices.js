@@ -36,7 +36,7 @@ exports.getReview = factory.getOne(Review);
 exports.getReviews = factory.getAll(Review);
 
 // @desc      Update Review
-// @route     PUT /api/reviews/:id
+// @route     PATCH /api/reviews/:id
 // @access    Private/protect/user
 exports.updateReview = factory.updateOne(Review);
 
