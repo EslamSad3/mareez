@@ -1,7 +1,6 @@
 const User = require('../models/userModel');
-const factory = require('./handlersFactory');
 const asyncHandler = require('express-async-handler');
-const ApiError = require('../utils/apiError');
+
 
 // @desc      Add Product to wish list
 // @route     POST /api/wishlist
