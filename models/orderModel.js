@@ -26,11 +26,11 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    shippingAddress:{
-      details:String,
-      phone:String,
-      city:String,
-      postalCode:String,
+    shippingAddress: {
+      details: String,
+      phone: String,
+      city: String,
+      postalCode: String,
     },
     totalOrderPrice: {
       type: Number,
@@ -47,5 +47,15 @@ const orderSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+orderSchema.pre(/^find/, function (next) {
+  this.populate({ path: 'user', select: 'name email phone ' })
+    .populate({
+      path: 'cartItems.product',
+      select: 'title imageCover color size price',
+    })
+    .populate({ path: 'shippingAddress', select: 'details phone postalCode' });
+  next();
+});
 
 module.exports = mongoose.model('order', orderSchema);
