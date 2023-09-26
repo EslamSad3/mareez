@@ -40,7 +40,7 @@ exports.createCashOrder = asyncHandler(async (req, res, next) => {
     }));
     await Product.bulkWrite(bulkOption, {});
     // 5- clear cart Based On Cart ID
-    await Cart.findByIdAndDelete(req.params.id);
+    await Cart.findByIdAndDelete(req.params.cartId);
   }
   res.status(200).json({ status: 'success', data: order });
 });

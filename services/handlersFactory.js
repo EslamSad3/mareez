@@ -44,24 +44,25 @@ exports.create = (Model) =>
     res.status(201).json({ data: collection });
   });
 
-exports.updateOne = (Model) =>
+  exports.updateOne = (Model) =>
   asyncHandler(async (req, res, next) => {
-    const collection = await Model.findByIdAndUpdate(req.params.id, req.body, {
+    const document = await Model.findByIdAndUpdate(req.params.id,req.body, {
       new: true,
     });
-    if (!collection) {
+
+    if (!document) {
       return next(
-        new ApiError(`No collection For This id ${req.params.id}`, 404)
+        new ApiError(`No document for this id ${req.params.id}`, 404)
       );
     }
-    collection.save();
-    res.status(200).json({ data: collection });
+    // document.save();
+    res.status(200).json({ data: document });
   });
 
 exports.deleteOne = (Model) =>
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const collection = await Model.findOneAndDelete(id);
+    const collection = await Model.findByIdAndDelete(id);
     if (!collection) {
       return next(new ApiError(`No collection For This id ${id}`, 404));
     }

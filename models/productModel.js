@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 
-const productShema = new mongoose.Schema(
+const productSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -80,7 +80,14 @@ const productShema = new mongoose.Schema(
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
-productShema.pre(/^find/, function (next) {
+
+productSchema.virtual('reviews', {
+  ref: 'review',
+  foreignField: 'product',
+  localField: '_id',
+});
+
+productSchema.pre(/^find/, function (next) {
   this.populate([
     { path: 'category', select: 'name' },
     { path: 'subcategory', select: 'name' },
@@ -88,7 +95,7 @@ productShema.pre(/^find/, function (next) {
   ]);
   next();
 });
-productShema.pre(/^create/, function (next) {
+productSchema.pre(/^create/, function (next) {
   this.populate([
     { path: 'category', select: 'name' },
     { path: 'subcategory', select: 'name' },
@@ -112,17 +119,13 @@ const setImageToUrl = (doc) => {
   }
 };
 
-productShema.post('init', (doc) => {
+productSchema.post('init', (doc) => {
   setImageToUrl(doc);
 });
-productShema.post('save', (doc) => {
+productSchema.post('save', (doc) => {
   setImageToUrl(doc);
 });
 
-productShema.virtual('reviews', {
-  ref: 'review',
-  foreignField: 'product',
-  localField: '_id',
-});
 
-module.exports = mongoose.model('product', productShema);
+
+module.exports = mongoose.model('product', productSchema);

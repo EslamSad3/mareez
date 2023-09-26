@@ -8,13 +8,15 @@ const {
 } = require('../middlewares/uploadImagesMiddleWare');
 // upload images
 
-exports.uploadProductImages = uploadMultipleImages([
-  {
-    name: 'imageCover',
-    maxCount: 1,
-  },
-  { name: 'images', maxCount: 4 },
-]);
+exports.uploadProductImages = uploadMultipleImages(
+  [
+    {
+      name: 'imageCover',
+      maxCount: 1,
+    },
+    { name: 'images', maxCount: 4 },
+  ]
+);
 
 exports.resizeProductImages = asyncHandler(async (req, res, next) => {
   // image cover
@@ -27,19 +29,6 @@ exports.resizeProductImages = asyncHandler(async (req, res, next) => {
       .toFile(`./uploads/products/${imageCoverfilename}`);
     req.body.imageCover = imageCoverfilename;
   }
-  // if (req.files.images) {
-  //   req.body.images = [];
-  //   for (let i = 0; i < req.files.images.length; i++) {
-  //     const imagesfilename = `Products-${Date.now()}-${v4()}-${i+1}.jpeg`;
-  //     await sharp(req.files.images[i].buffer)
-  //       .resize(600, 600)
-  //       .toFormat('jpeg')
-  //       .jpeg({ quality: 90 })
-  //       .toFile(`./uploads/products/${imagesfilename}`);
-  //     req.body.images.push(imagesfilename);
-  //   }
-  //   next();
-  // }
   if (req.files.images) {
     req.body.images = [];
     await Promise.all(
@@ -55,8 +44,8 @@ exports.resizeProductImages = asyncHandler(async (req, res, next) => {
         req.body.images.push(imagesfilename);
       })
     );
-    next();
   }
+  next();
 });
 
 // @desc      Create product
