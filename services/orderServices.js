@@ -165,6 +165,4 @@ exports.webhookCheckOut = asyncHandler(async (req, res, next) => {
   if (event.type === 'checkout.session.completed') {
     console.log('create order here');
   }
-  // Return a 200 response to acknowledge receipt of the event
-  response.send();
 });
