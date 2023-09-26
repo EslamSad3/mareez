@@ -1,6 +1,7 @@
 const path = require('path');
-const cors = require('cors');
 const express = require('express');
+const cors = require('cors');
+const compression = require('compression')
 const dotenv = require('dotenv');
 dotenv.config();
 const morgan = require('morgan');
@@ -17,6 +18,7 @@ const app = express();
 app.use(cors());
 app.options('*', cors());
 
+app.use(compression());
 // MiddleWares
 app.use(express.json());
 app.use(express.static(path.join(__dirname, './uploads')));
