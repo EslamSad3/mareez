@@ -5,6 +5,8 @@ const {
   getAllOrders,
   getSpesificOrder,
   filterOrdersByLoggedUser,
+  updateOrderToDelivered,
+  updateOrderToPaid,
 } = require('../services/orderServices');
 const router = express.Router();
 
@@ -14,5 +16,9 @@ router
   .route('/')
   .get(auth.allowedTo('admin', 'user'), filterOrdersByLoggedUser, getAllOrders);
 router.route('/:id').get(getSpesificOrder);
+
+router.use(auth.allowedTo('admin'));
+router.route('/:id/pay').patch(updateOrderToPaid);
+router.route('/:id/delivered').patch(updateOrderToDelivered);
 
 module.exports = router;

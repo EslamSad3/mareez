@@ -48,17 +48,62 @@ exports.createCashOrder = asyncHandler(async (req, res, next) => {
 // @desc    Get all Orders
 // @route   GET /api/orders/
 // @access  private/ User / admin
-
 exports.filterOrdersByLoggedUser = asyncHandler(async (req, res, next) => {
-  if(req.user.role === 'user') req.filterObj = {user:req.user._id}
-  next()
-})
-exports.getAllOrders = factory.getAll(Order)
-
-
+  if (req.user.role === 'user') req.filterObj = { user: req.user._id };
+  next();
+});
+exports.getAllOrders = factory.getAll(Order);
 
 // @desc    Get Spesific Order
 // @route   GET /api/orders/:orderid
 // @access  private/ User / admin
 
-exports.getSpesificOrder = factory.getOne(Order)
+exports.getSpesificOrder = factory.getOne(Order);
+
+// @desc    Update Order Status to Paid
+// @route   PATCH /api/orders/:orderid/pay
+// @access  private/ admin
+
+exports.updateOrderToPaid = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+  if (!order) {
+    return next(new ApiError('No order Found For This ID', 404));
+  }
+  // update order to paid
+  order.isPaid = true;
+  order.paidAt = Date.now();
+
+  const updatedOrder = await order.save();
+  res
+    .status(200)
+    .json({
+      status: 'success',
+      message: 'Order paid successfully',
+      data: updatedOrder,
+    });
+});
+
+
+
+// @desc    Update Order Status to delivered
+// @route   PATCH /api/orders/:orderid/delivered
+// @access  private/ admin
+
+exports.updateOrderToDelivered = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+  if (!order) {
+    return next(new ApiError('No order Found For This ID', 404));
+  }
+  // update order to Delivered
+  order.isDelivered = true
+  order.deliveredAt = Date.now()
+
+  const updatedOrder = await order.save();
+  res
+    .status(200)
+    .json({
+      status: 'success',
+      message: 'Order paid successfully',
+      data: updatedOrder,
+    });
+});
