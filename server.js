@@ -1,5 +1,5 @@
 const path = require('path');
-const  cors = require('cors');
+const cors = require('cors');
 const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -13,12 +13,15 @@ const mountRoutes = require('./routes');
 dbConnection();
 //Express app
 const app = express();
-app.use(cors())
+
+app.use(cors());
+app.options('*', cors());
+
 // MiddleWares
 app.use(express.json());
 app.use(express.static(path.join(__dirname, './uploads')));
 // Mount Routes
-mountRoutes(app)
+mountRoutes(app);
 // Error handling ways
 // 1 - Create Err Send it to global err handler
 // app.all('*',(req,res,next)=>{
