@@ -2,9 +2,10 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const asyncHandler = require('express-async-handler');
 const factory = require('./handlersFactory');
 const ApiError = require('../utils/apiError');
-const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
 const Cart = require('../models/cartModel');
+const User = require('../models/userModel');
+const Order = require('../models/orderModel');
 
 // @desc    Create Cash Order
 // @route   POST /api/orders/:cartId
@@ -147,22 +148,56 @@ exports.checkOutSession = asyncHandler(async (req, res, next) => {
   res.status(200).json({ status: 'success', session });
 });
 
-exports.webhookCheckOut = asyncHandler(async (req, res, next) => {
-  const sig = request.headers['stripe-signature'];
+const createCardOrder = async (session) => {
+  const cartId = session.client_reference_id;
+  const shippingAddress = session.metadata;
+  const orderPrice = session.amount_total / 100;
 
+  const cart = await Cart.findById(cartId);
+  const user = await User.findOne({ email: session.customer_email });
+
+  // create Order With card
+  const order = await Order.create({
+    user: user._id,
+    shippingAddress,
+    cartItems: cart.cartItems,
+    totalOrderPrice: orderPrice,
+    isPaid: true,
+    paidAt: Date.now(),
+    paymentMethod: 'card',
+  });
+  // after Creating Order, decrement Product Quantity and increment product sold
+  if (order) {
+    const bulkOption = cart.cartItems.map((item) => ({
+      updateOne: {
+        filter: { _id: item.product },
+        update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
+      },
+    }));
+    await Product.bulkWrite(bulkOption, {});
+    // 5- clear cart Based On Cart ID
+    await Cart.findByIdAndDelete(cartId);
+  }
+};
+
+exports.webhookCheckout = asyncHandler(async (req, res, next) => {
+  const sig = req.headers['stripe-signature'];
   let event;
-
   try {
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
-      process.env.STRIPE_WEBHOOK_KEY
+      process.env.STRIPE_WEBHOOK_SECRET
     );
+    console.log('event', event);
   } catch (err) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
-
-  if (event.type === 'checkout.session.completed') {
-    console.log('create order here');
+  if (event.status === 'complete') {
+    //  Create order
+    console.log('create order');
+    createCardOrder(event.data.object);
   }
+
+  res.status(200).json({ received: true });
 });

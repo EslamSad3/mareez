@@ -10,7 +10,7 @@ const globalError = require('./middlewares/errorMiddleware');
 const dbConnection = require('./config/db');
 // Routes
 const mountRoutes = require('./routes');
-const { webhookCheckOut } = require('./services/orderServices');
+const  {webhookCheckout}  = require('./services/orderServices');
 // DB Connection
 dbConnection();
 //Express app
@@ -22,12 +22,18 @@ app.options('*', cors());
 app.use(compression());
 
 // webhook-checkout
-app.post('/webhook-checkout',express.raw({type: 'application/json'}),webhookCheckOut)
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  webhookCheckout
+);
+
 // MiddleWares
 app.use(express.json());
 app.use(express.static(path.join(__dirname, './uploads')));
 // Mount Routes
 mountRoutes(app);
+
 // Error handling ways
 // 1 - Create Err Send it to global err handler
 // app.all('*',(req,res,next)=>{
