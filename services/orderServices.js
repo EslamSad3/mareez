@@ -1,3 +1,4 @@
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const asyncHandler = require('express-async-handler');
 const factory = require('./handlersFactory');
 const ApiError = require('../utils/apiError');
@@ -74,16 +75,12 @@ exports.updateOrderToPaid = asyncHandler(async (req, res, next) => {
   order.paidAt = Date.now();
 
   const updatedOrder = await order.save();
-  res
-    .status(200)
-    .json({
-      status: 'success',
-      message: 'Order paid successfully',
-      data: updatedOrder,
-    });
+  res.status(200).json({
+    status: 'success',
+    message: 'Order paid successfully',
+    data: updatedOrder,
+  });
 });
-
-
 
 // @desc    Update Order Status to delivered
 // @route   PATCH /api/orders/:orderid/delivered
@@ -95,15 +92,57 @@ exports.updateOrderToDelivered = asyncHandler(async (req, res, next) => {
     return next(new ApiError('No order Found For This ID', 404));
   }
   // update order to Delivered
-  order.isDelivered = true
-  order.deliveredAt = Date.now()
+  order.isDelivered = true;
+  order.deliveredAt = Date.now();
 
   const updatedOrder = await order.save();
-  res
-    .status(200)
-    .json({
-      status: 'success',
-      message: 'Order paid successfully',
-      data: updatedOrder,
-    });
+  res.status(200).json({
+    status: 'success',
+    message: 'Order paid successfully',
+    data: updatedOrder,
+  });
+});
+
+// @desc    GET CHeck out Session From Stripe And Send It As Response
+// @route   GET /api/orders/check-out-session/:cartId
+// @access  private/ user
+
+exports.checkOutSession = asyncHandler(async (req, res, next) => {
+  const texFees = 0;
+  const shippingFees = 0;
+  // 1- get Cart Based On Cart ID
+  const cart = await Cart.findById(req.params.cartId);
+  if (!cart) {
+    return next(new ApiError('No Cart Found ', 404));
+  }
+
+  // 2- get Order Price Based On Cart Price (check if coupon applied)
+  const cartPrice = cart.totalAfterDiscount
+    ? cart.totalAfterDiscount
+    : cart.total;
+  const totalOrderPrice = cartPrice + texFees + shippingFees;
+
+  // 3- create stripe checkout session
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          currency: 'sar',
+          product_data: {
+            name: req.user.name,
+          },
+
+          unit_amount: totalOrderPrice * 100,
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: `${req.protocol}://${req.get('host')}/orders`,
+    cancel_url: `${req.protocol}://${req.get('host')}/cart`,
+    customer_email: req.user.email,
+    client_reference_id: req.params.cartId,
+    metadata: req.body.shippingAddress,
+  });
+  res.status(200).json({ status: 'success', session });
 });
