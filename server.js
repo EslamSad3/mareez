@@ -10,6 +10,7 @@ const globalError = require('./middlewares/errorMiddleware');
 const dbConnection = require('./config/db');
 // Routes
 const mountRoutes = require('./routes');
+const { webhookCheckOut } = require('./services/orderServices');
 // DB Connection
 dbConnection();
 //Express app
@@ -19,6 +20,9 @@ app.use(cors());
 app.options('*', cors());
 
 app.use(compression());
+
+// webhook-checkout
+app.post('/webhook-checkout',express.raw({type: 'application/json'}),webhookCheckOut)
 // MiddleWares
 app.use(express.json());
 app.use(express.static(path.join(__dirname, './uploads')));
