@@ -1,4 +1,5 @@
 const path = require('path');
+const  cors = require('cors');
 const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -12,6 +13,7 @@ const mountRoutes = require('./routes');
 dbConnection();
 //Express app
 const app = express();
+app.use(cors())
 // MiddleWares
 app.use(express.json());
 app.use(express.static(path.join(__dirname, './uploads')));
