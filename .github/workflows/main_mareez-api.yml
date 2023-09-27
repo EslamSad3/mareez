@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'mareez-api'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_483A2E7C4334434CB259FB5BA1084D55 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E2323DF506D74AC993BDC2C8E9190B35 }}
           package: .
