@@ -6,6 +6,7 @@ const ApiError = require('../utils/apiError');
 const sendEmail = require('../utils/sendEmail');
 const User = require('../models/userModel');
 const { createToken } = require('../utils/createToken');
+const { sanitizeUser } = require('../utils/sanitizeData');
 
 
 // @desc      Create User
@@ -21,7 +22,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
   });
   // 2- Generate Web Token
   const token = createToken(user._id);
-  res.status(201).json({ data: user, token });
+  res.status(201).json({ data: sanitizeUser(user), token });
 });
 
 // @desc      User Login
@@ -37,7 +38,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   // 3- generarate token
   const token = createToken(user._id);
   // 4- send res
-  res.status(200).json({ data: user, token });
+  res.status(200).json({ data: sanitizeUser(user), token });
 });
 
 // @desc     Make Sure User Is Loggwed In

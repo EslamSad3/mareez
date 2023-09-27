@@ -1,16 +1,22 @@
 const path = require('path');
+const mongoSanitize = require('express-mongo-sanitize');
+const hpp = require('hpp');
+const xss = require("xss-clean");
 const express = require('express');
+
+const dotenv = require('dotenv');
+const morgan = require('morgan');
 const cors = require('cors');
 const compression = require('compression');
-const dotenv = require('dotenv');
+const helmet = require('helmet');
+const { limiter } = require('./middlewares/rateLimiterMiddleware');
+
 dotenv.config();
-const morgan = require('morgan');
 const ApiError = require('./utils/apiError');
 const globalError = require('./middlewares/errorMiddleware');
 const dbConnection = require('./config/db');
 // Routes
 const mountRoutes = require('./routes');
-const helmet = require('helmet');
 const { webhookCheckout } = require('./services/orderServices');
 // DB Connection
 dbConnection();
@@ -32,8 +38,25 @@ app.post(
 );
 
 // MiddleWares
-app.use(express.json());
+app.use(express.json({ limit: '20kb' }));
 app.use(express.static(path.join(__dirname, './uploads')));
+
+if(process.env.NODE_ENV === 'development'){
+  app.use(morgan('dev'))
+  console.log(`mode : ${process.env.NODE_ENV}`)
+}
+
+app.use(express.urlencoded({ extended: false }));
+app.use(hpp({ whitelist: [ 'filter' ,"price",'sold','quantity','rating','rates','search'] }));
+
+// to apply data sanitization
+app.use(mongoSanitize());
+app.use(xss());
+
+
+// apply rate limite for all requests
+app.use('/api', limiter);
+
 // Mount Routes
 mountRoutes(app);
 
