@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
-const compression = require('compression')
+const compression = require('compression');
 const dotenv = require('dotenv');
 dotenv.config();
 const morgan = require('morgan');
@@ -10,11 +10,14 @@ const globalError = require('./middlewares/errorMiddleware');
 const dbConnection = require('./config/db');
 // Routes
 const mountRoutes = require('./routes');
-const  {webhookCheckout}  = require('./services/orderServices');
+const helmet = require('helmet');
+const { webhookCheckout } = require('./services/orderServices');
 // DB Connection
 dbConnection();
 //Express app
 const app = express();
+
+app.use(helmet());
 
 app.use(cors());
 app.options('*', cors());
