@@ -18,7 +18,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-    phone: String,
+    phone: {
+      type: String,
+      required: [true, 'Phone Number is required'],
+      unique: true,
+    },
     profileImg: String,
     password: {
       type: String,
