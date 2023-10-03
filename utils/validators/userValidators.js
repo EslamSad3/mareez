@@ -4,7 +4,6 @@ const { check } = require('express-validator');
 const validatorMiddleWare = require('../../middlewares/validatorMiddleWare');
 const bcrypt = require('bcryptjs');
 
-
 // Admin
 
 exports.getUserValidator = [
@@ -48,9 +47,8 @@ exports.createUserValidator = [
     }),
   check('confirmPassword').notEmpty().withMessage('Confirm Password Required'),
   check('phone')
-    .notEmpty().withMessage('Please enter a valid SA phone number')
-    .isMobilePhone('ar-SA')
-    .withMessage('invalid phone number')
+    .notEmpty()
+    .withMessage('Please enter a valid SA phone number')
     .custom(async (val) => {
       const user = await User.findOne({ phone: val });
       if (user) {
