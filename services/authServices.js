@@ -21,7 +21,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
     password: req.body.password,
   });
   // 2- Generate Web Token
-  const token = createToken(user._id);
+  const token = createToken(user);
   res.status(201).json({ data: sanitizeUser(user), token });
 });
 
