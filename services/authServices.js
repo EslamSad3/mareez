@@ -36,7 +36,7 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ApiError('Incorrect Email or Password', 401));
   }
   // 3- generarate token
-  const token = createToken(user._id);
+  const token = createToken(user);
   // 4- send res
   res.status(200).json({ data: sanitizeUser(user), token });
 });
