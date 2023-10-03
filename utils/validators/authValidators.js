@@ -60,8 +60,6 @@ exports.loginValidator = [
     .withMessage('Inavlid Email Formate'),
   check('password')
     .notEmpty()
-    .withMessage('Password Required')
-    .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters'),
+    .withMessage('Password Required'),
   validatorMiddleWare,
 ];
