@@ -8,7 +8,6 @@ const User = require('../models/userModel');
 const { createToken } = require('../utils/createToken');
 const { sanitizeUser } = require('../utils/sanitizeData');
 
-
 // @desc      Create User
 // @route     POST /api/auth/signup
 // @access    Public
@@ -22,7 +21,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
   });
   // 2- Generate Web Token
   const token = createToken(user);
-  res.status(201).json({ data: sanitizeUser(user), token });
+  res.status(201).json({ data: user, token });
 });
 
 // @desc      User Login
@@ -38,7 +37,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   // 3- generarate token
   const token = createToken(user);
   // 4- send res
-  res.status(200).json({ data: sanitizeUser(user), token });
+  res.status(200).json({ data: user, token });
 });
 
 // @desc     Make Sure User Is Loggwed In
@@ -191,8 +190,6 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   await user.save();
 
   // 3- Generate New Token
-  const token = createToken(user._id)
-  res.status(200).json({ success: 'Password Changed Successfully' ,token});
+  const token = createToken(user._id);
+  res.status(200).json({ success: 'Password Changed Successfully', token });
 });
-
-
