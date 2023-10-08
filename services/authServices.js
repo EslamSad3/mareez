@@ -64,8 +64,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
   // 3- check if user exists
   const currentUser = await User.findOne({ _id: decoded.payload._id });
-  console.log(decoded);
-  console.log(currentUser);
   if (!currentUser) {
     return next(new ApiError(`User With This token does not exist`, 401));
   }
