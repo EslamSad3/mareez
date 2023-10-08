@@ -61,8 +61,11 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
   // 2- check if token is valid, no changes happened or expired.
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
   // 3- check if user exists
-  const currentUser = await User.findById(decoded.userId);
+  const currentUser = await User.findOne({ _id: decoded.payload._id });
+  console.log(decoded);
+  console.log(currentUser);
   if (!currentUser) {
     return next(new ApiError(`User With This token does not exist`, 401));
   }
