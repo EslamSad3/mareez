@@ -29,8 +29,7 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        "script-src": ["'self'", "'unsafe-inline'", "http://localhost:3000/"],
+        ...helmet.contentSecurityPolicy.getDefaultDirectives()
       },
     },
   })
