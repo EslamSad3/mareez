@@ -30,7 +30,7 @@ app.use(
     origin: '*',
   })
 );
-app.use(helmet());
+// app.use(helmet());
 
 app.use(compression());
 
