@@ -26,7 +26,7 @@ const app = express();
 app.use(express.json({ limit: '20kb' }));
 
 app.use(helmet({
-  crossOriginResourcePolicy: false,
+  contentSecurityPolicy : false
 }));
 
 app.use(
