@@ -32,8 +32,8 @@ app.use(
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
         "script-src": ["'self'", "'unsafe-inline'", "*"],
       },
-      crossOriginEmbedderPolicy: false
     },
+    crossOriginEmbedderPolicy: false
   })
 );
 app.use(
