@@ -31,9 +31,7 @@ app.use(express.json({ limit: '20kb' }));
 
 app.use(
   cors({
-    credentials: true,
-    origin: "https://mareez.onrender.com",
-    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS','PATCH']
+    origin: '*'
   })
 );
 
