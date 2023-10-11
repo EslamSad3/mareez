@@ -33,7 +33,7 @@ app.use(
         "script-src": ["'self'", "'unsafe-inline'", "*"],
       },
     },
-    crossOriginEmbedderPolicy: false
+    
   })
 );
 app.use(
