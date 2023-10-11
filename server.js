@@ -25,12 +25,12 @@ dbConnection();
 const app = express();
 app.use(express.json({ limit: '20kb' }));
 
-app.use(helmet.crossOriginEmbedderPolicy({ policy: 'credentialless' }));
 app.use(
   cors({
     origin: '*',
   })
 );
+app.use(helmet.crossOriginEmbedderPolicy({ policy: 'credentialless' }));
 
 app.use(compression());
 
