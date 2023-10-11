@@ -30,7 +30,7 @@ app.use(
     origin: '*',
   })
 );
-app.use(helmet.crossOriginEmbedderPolicy({ policy: 'credentialless' }));
+app.use(helmet());
 
 app.use(compression());
 
