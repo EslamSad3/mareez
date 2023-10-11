@@ -17,12 +17,15 @@ exports.uploadSubCategoryImage = uploadSingleImage('image');
 
 exports.resizeSubCategoryImage = asyncHandler(async (req, res, next) => {
   const filename = `SubCategory-${Date.now()}-${v4()}.jpeg`;
-  await sharp(req.file.buffer)
-    .resize(600, 600)
-    .toFormat('jpeg')
-    .jpeg({ quality: 90 })
-    .toFile(`./uploads/subcategories/${filename}`);
-  req.body.image = filename;
+  if (req.file) {
+    console.log(req.file);
+    await sharp(req.file.buffer)
+      .resize(600, 600)
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(`./uploads/subcategories/${filename}`);
+    req.body.image = filename;
+  }
   next();
 });
 
