@@ -31,9 +31,7 @@ app.use(
   })
 );
 
-app.use(helmet({
-  contentSecurityPolicy : false
-}));
+app.use(helmet());
 
 app.use(compression());
 
