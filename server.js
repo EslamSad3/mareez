@@ -22,8 +22,9 @@ const { webhookCheckout } = require('./services/orderServices');
 dbConnection();
 
 //Express app
-app.use(helmet());
 const app = express();
+
+app.use(helmet());
 app.use(
   cors({
     credentials: true,
