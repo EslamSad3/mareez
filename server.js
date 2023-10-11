@@ -20,12 +20,16 @@ const mountRoutes = require('./routes');
 const { webhookCheckout } = require('./services/orderServices');
 // DB Connection
 dbConnection();
-//Express app
-const app = express();
-app.use(cors());
-app.options('*', cors());
 
+//Express app
 app.use(helmet());
+const app = express();
+app.use(
+  cors({
+    credentials: true,
+    origin: "*",
+  })
+);
 
 
 app.use(compression());
