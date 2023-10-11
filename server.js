@@ -1,7 +1,7 @@
 const path = require('path');
 const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
-const xss = require('xss-clean');
+const xss = require("xss-clean");
 const express = require('express');
 
 const dotenv = require('dotenv');
@@ -25,12 +25,23 @@ dbConnection();
 const app = express();
 app.use(express.json({ limit: '20kb' }));
 
-app.use(helmet({ crossOriginEmbedderPolicy: false }));
 app.use(
-  cors({
-    origin: '*',
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        "script-src": ["'self'", "'unsafe-inline'", "*"],
+      },
+      crossOriginEmbedderPolicy: false
+    },
   })
 );
+app.use(
+  cors({
+    origin: '*'
+  })
+);
+
 
 app.use(compression());
 
@@ -44,29 +55,18 @@ app.post(
 // MiddleWares
 app.use(express.static(path.join(__dirname, 'uploads')));
 
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-  console.log(`mode : ${process.env.NODE_ENV}`);
+if(process.env.NODE_ENV === 'development'){
+  app.use(morgan('dev'))
+  console.log(`mode : ${process.env.NODE_ENV}`)
 }
 
 app.use(express.urlencoded({ extended: false }));
-app.use(
-  hpp({
-    whitelist: [
-      'filter',
-      'price',
-      'sold',
-      'quantity',
-      'rating',
-      'rates',
-      'search',
-    ],
-  })
-);
+app.use(hpp({ whitelist: [ 'filter' ,"price",'sold','quantity','rating','rates','search'] }));
 
 // to apply data sanitization
 app.use(mongoSanitize());
 app.use(xss());
+
 
 // apply rate limite for all requests
 app.use('/api', limiter);
