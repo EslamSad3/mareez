@@ -32,7 +32,7 @@ app.use(express.json({ limit: '20kb' }));
 app.use(
   cors({
     credentials: true,
-    origin: "*",
+    origin: "http://localhost:3000",
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS','PATCH']
   })
 );
