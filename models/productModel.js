@@ -41,7 +41,7 @@ const productSchema = new mongoose.Schema(
       type: Number,
     },
     colors: {
-      type: [String],
+      type: [String]
     },
     imageCover: {
       type: String,
