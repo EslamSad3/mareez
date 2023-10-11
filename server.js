@@ -25,16 +25,15 @@ dbConnection();
 const app = express();
 app.use(express.json({ limit: '20kb' }));
 
-app.use(helmet({
-  contentSecurityPolicy : false
-}));
-
 app.use(
   cors({
     origin: '*'
   })
 );
 
+app.use(helmet({
+  contentSecurityPolicy : false
+}));
 
 app.use(compression());
 
