@@ -22,13 +22,13 @@ const { webhookCheckout } = require('./services/orderServices');
 dbConnection();
 //Express app
 const app = express();
+app.use(cors());
+app.options('*', cors());
 
 app.use(helmet({
   crossOriginResourcePolicy: false,
 }));
 
-app.use(cors());
-app.options('*', cors());
 
 app.use(compression());
 
