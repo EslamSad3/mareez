@@ -23,14 +23,17 @@ dbConnection();
 
 //Express app
 const app = express();
+app.use(express.json({ limit: '20kb' }));
 
 app.use(helmet({
   crossOriginResourcePolicy: false,
 }));
+
 app.use(
   cors({
     credentials: true,
     origin: "*",
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS','PATCH']
   })
 );
 
@@ -45,7 +48,6 @@ app.post(
 );
 
 // MiddleWares
-app.use(express.json({ limit: '20kb' }));
 app.use(express.static(path.join(__dirname, './uploads')));
 
 if(process.env.NODE_ENV === 'development'){
