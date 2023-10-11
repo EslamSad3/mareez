@@ -25,9 +25,7 @@ const app = express();
 app.use(cors());
 app.options('*', cors());
 
-app.use(helmet({
-  crossOriginResourcePolicy: false,
-}));
+app.use(helmet());
 
 
 app.use(compression());
