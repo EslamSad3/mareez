@@ -26,18 +26,18 @@ const subCategorySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const setImageToUrl = (doc) => {
-  if (doc.image) {
-    const imageUrl = `${process.env.BASE_URL}/subcategories/${doc.image}`;
-    doc.image = imageUrl;
-  }
-};
+// const setImageToUrl = (doc) => {
+//   if (doc.image) {
+//     const imageUrl = `${process.env.BASE_URL}/subcategories/${doc.image}`;
+//     doc.image = imageUrl;
+//   }
+// };
 
-subCategorySchema.post('init', (doc) => {
-  setImageToUrl(doc);
-});
-subCategorySchema.post('save', (doc) => {
-  setImageToUrl(doc);
-});
+// subCategorySchema.post('init', (doc) => {
+//   setImageToUrl(doc);
+// });
+// subCategorySchema.post('save', (doc) => {
+//   setImageToUrl(doc);
+// });
 
 module.exports = mongoose.model('subcategory', subCategorySchema);

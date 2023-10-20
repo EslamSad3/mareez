@@ -63,18 +63,18 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const setImageTOUrl = (doc) => {
-  if (doc.profileImg) {
-    const imgUrl = `${process.env.BASE_URL}/users/${doc.profileImg}`;
-    doc.profileImg = imgUrl;
-  }
-};
-userSchema.post('init', (doc) => {
-  setImageTOUrl(doc);
-});
-userSchema.post('save', (doc) => {
-  setImageTOUrl(doc);
-});
+// const setImageTOUrl = (doc) => {
+//   if (doc.profileImg) {
+//     const imgUrl = `${process.env.BASE_URL}/users/${doc.profileImg}`;
+//     doc.profileImg = imgUrl;
+//   }
+// };
+// userSchema.post('init', (doc) => {
+//   setImageTOUrl(doc);
+// });
+// userSchema.post('save', (doc) => {
+//   setImageTOUrl(doc);
+// });
 
 userSchema.pre('save', async function (next) {
   // Hashing Password
