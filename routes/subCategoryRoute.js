@@ -10,7 +10,7 @@ const {
   setCategoryidToBody,
   createFilterObj,
   uploadSubCategoryImage,
-  resizeSubCategoryImage,
+  // resizeSubCategoryImage,
 } = require('../services/subCategoryServices');
 const {
   createSubCategoryValidator,
@@ -27,7 +27,7 @@ router
     auth.allowedTo('admin'),
     setCategoryidToBody,
     uploadSubCategoryImage,
-    resizeSubCategoryImage,
+    // resizeSubCategoryImage,
     createSubCategoryValidator,
     createsubCategory
   )

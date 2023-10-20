@@ -47,7 +47,7 @@ exports.createProductValidator = [
     }),
   check('colors')
     .optional(),
-  check('imageCover').notEmpty().withMessage('image Cover is required'),
+  // check('imageCover').notEmpty().withMessage('image Cover is required'),
   check('images')
     .optional()
     .isArray()

@@ -8,7 +8,7 @@ const {
   updateUserPassword,
   deleteUser,
   uploadUserImage,
-  resizeUserImage,
+  // resizeUserImage,
   getLoggedUserData,
   changeLoggedUserPassword,
   updateProfile,
@@ -43,10 +43,10 @@ router
 router
   .route('/')
   .get(getUsers)
-  .post(uploadUserImage, resizeUserImage, createUserValidator, createUser);
+  // .post(uploadUserImage, resizeUserImage, createUserValidator, createUser);
 router
   .route('/:id')
   .get(getUserValidator, getUser)
-  .patch(uploadUserImage, resizeUserImage, updateUserValidator, updateUser)
+  // .patch(uploadUserImage, resizeUserImage, updateUserValidator, updateUser)
   .delete(deleteUserValidator, deleteUser);
 module.exports = router;

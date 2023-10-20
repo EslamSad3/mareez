@@ -2,13 +2,13 @@ const Brand = require('../models/brandModel');
 const factory = require('./handlersFactory');
 
 const asyncHandler = require('express-async-handler');
-const { uploadSingleImage } = require('../middlewares/uploadImagesMiddleWare');
+const { uploadSingleImage, uploadSingleFile } = require('../middlewares/uploadImagesMiddleWare');
 const { v4 } = require('uuid');
 const sharp = require('sharp');
 
 
 
-exports.uploadBrandImage = uploadSingleImage('image');
+exports.uploadBrandImage = uploadSingleFile('image');
 exports.resizeBrandImage = asyncHandler(async (req, res, next) => {
   const filename = `Brand-${Date.now()}-${v4()}.jpeg`;
   await sharp(req.file.buffer)

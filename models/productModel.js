@@ -103,27 +103,27 @@ productSchema.pre(/^create/, function (next) {
   next();
 });
 
-const setImageToUrl = (doc) => {
-  if (doc.imageCover) {
-    const imageUrl = `${process.env.BASE_URL}/products/${doc.imageCover}`;
-    doc.imageCover = imageUrl;
-  }
-  if (doc.images) {
-    const imagesList = [];
-    doc.images.forEach((image) => {
-      const imageUrl = `${process.env.BASE_URL}/products/${image}`;
-      imagesList.push(imageUrl);
-    });
-    doc.images = imagesList;
-  }
-};
+// const setImageToUrl = (doc) => {
+//   if (doc.imageCover) {
+//     const imageUrl = `${process.env.BASE_URL}/products/${doc.imageCover}`;
+//     doc.imageCover = imageUrl;
+//   }
+//   if (doc.images) {
+//     const imagesList = [];
+//     doc.images.forEach((image) => {
+//       const imageUrl = `${process.env.BASE_URL}/products/${image}`;
+//       imagesList.push(imageUrl);
+//     });
+//     doc.images = imagesList;
+//   }
+// };
 
-productSchema.post('init', (doc) => {
-  setImageToUrl(doc);
-});
-productSchema.post('save', (doc) => {
-  setImageToUrl(doc);
-});
+// productSchema.post('init', (doc) => {
+//   setImageToUrl(doc);
+// });
+// productSchema.post('save', (doc) => {
+//   setImageToUrl(doc);
+// });
 
 
 

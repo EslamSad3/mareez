@@ -2,14 +2,14 @@ const User = require('../models/userModel');
 const factory = require('./handlersFactory');
 
 const asyncHandler = require('express-async-handler');
-const { uploadSingleImage } = require('../middlewares/uploadImagesMiddleWare');
+const { uploadSingleImage, uploadSingleFile } = require('../middlewares/uploadImagesMiddleWare');
 const { v4 } = require('uuid');
 const sharp = require('sharp');
 const ApiError = require('../utils/apiError');
 const bcrypt = require('bcryptjs');
 const { createToken } = require('../utils/createToken');
 
-exports.uploadUserImage = uploadSingleImage('profileImg');
+exports.uploadUserImage = uploadSingleFile('profileImg');
 exports.resizeUserImage = asyncHandler(async (req, res, next) => {
   const filename = `User-${Date.now()}-${v4()}.jpeg`;
   if (req.file) {

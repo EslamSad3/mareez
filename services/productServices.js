@@ -4,11 +4,11 @@ const sharp = require('sharp');
 const { v4 } = require('uuid');
 const asyncHandler = require('express-async-handler');
 const {
-  uploadMultipleImages,
+  uploadMultipleImages, uploadMixOfFiles,
 } = require('../middlewares/uploadImagesMiddleWare');
 // upload images
 
-exports.uploadProductImages = uploadMultipleImages(
+exports.uploadProductImages = uploadMixOfFiles(
   [
     {
       name: 'imageCover',
@@ -18,35 +18,35 @@ exports.uploadProductImages = uploadMultipleImages(
   ]
 );
 
-exports.resizeProductImages = asyncHandler(async (req, res, next) => {
-  // image cover
-  if (req.files.imageCover) {
-    const imageCoverfilename = `Products-${Date.now()}-${v4()}-cover.jpeg`;
-    await sharp(req.files.imageCover[0].buffer)
-      .resize(2000, 1333)
-      .toFormat('jpeg')
-      .jpeg({ quality: 90 })
-      .toFile(`./uploads/products/${imageCoverfilename}`);
-    req.body.imageCover = imageCoverfilename;
-  }
-  if (req.files.images) {
-    req.body.images = [];
-    await Promise.all(
-      req.files.images.map(async (img, index) => {
-        const imagesfilename = `Products-${Date.now()}-${v4()}-${
-          index + 1
-        }.jpeg`;
-        await sharp(img.buffer)
-          .resize(600, 600)
-          .toFormat('jpeg')
-          .jpeg({ quality: 90 })
-          .toFile(`./uploads/products/${imagesfilename}`);
-        req.body.images.push(imagesfilename);
-      })
-    );
-  }
-  next();
-});
+// exports.resizeProductImages = asyncHandler(async (req, res, next) => {
+//   // image cover
+//   if (req.files.imageCover) {
+//     const imageCoverfilename = `Products-${Date.now()}-${v4()}-cover.jpeg`;
+//     await sharp(req.files.imageCover[0].buffer)
+//       .resize(2000, 1333)
+//       .toFormat('jpeg')
+//       .jpeg({ quality: 90 })
+//       .toFile(`./uploads/products/${imageCoverfilename}`);
+//     req.body.imageCover = imageCoverfilename;
+//   }
+//   if (req.files.images) {
+//     req.body.images = [];
+//     await Promise.all(
+//       req.files.images.map(async (img, index) => {
+//         const imagesfilename = `Products-${Date.now()}-${v4()}-${
+//           index + 1
+//         }.jpeg`;
+//         await sharp(img.buffer)
+//           .resize(600, 600)
+//           .toFormat('jpeg')
+//           .jpeg({ quality: 90 })
+//           .toFile(`./uploads/products/${imagesfilename}`);
+//         req.body.images.push(imagesfilename);
+//       })
+//     );
+//   }
+//   next();
+// });
 
 // @desc      Create product
 // @route     POST /api/products

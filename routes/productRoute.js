@@ -8,7 +8,7 @@ const {
   updateProduct,
   deleteProduct,
   uploadProductImages,
-  resizeProductImages,
+  // resizeProductImages,
 } = require('../services/productServices');
 const {
   getProductValidator,
@@ -28,7 +28,7 @@ router
     auth.protect,
     auth.allowedTo('admin'),
     uploadProductImages,
-    resizeProductImages,
+    // resizeProductImages,
     createProductValidator,
     createProduct
   );
@@ -40,7 +40,7 @@ router
     auth.protect,
     auth.allowedTo('admin'),
     uploadProductImages,
-    resizeProductImages,
+    // resizeProductImages,
     updateProductValidator,
     updateProduct
   )

@@ -1,5 +1,5 @@
 const { v4 } = require('uuid');
-const { uploadSingleImage } = require('../middlewares/uploadImagesMiddleWare');
+const { uploadSingleImage, uploadSingleFile } = require('../middlewares/uploadImagesMiddleWare');
 const factory = require('./handlersFactory');
 const sharp = require('sharp');
 const asyncHandler = require('express-async-handler');
@@ -13,7 +13,7 @@ exports.setCategoryidToBody = (req, res, next) => {
 
 // upload single image
 
-exports.uploadSubCategoryImage = uploadSingleImage('image');
+exports.uploadSubCategoryImage = uploadSingleFile('image');
 
 exports.resizeSubCategoryImage = asyncHandler(async (req, res, next) => {
   const filename = `SubCategory-${Date.now()}-${v4()}.jpeg`;
