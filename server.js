@@ -69,7 +69,7 @@ app.use(mongoSanitize());
 app.use(xss());
 
 // apply rate limite for all requests
-app.use('/api', limiter);
+// app.use('/api', limiter);
 
 // Mount Routes
 mountRoutes(app);
