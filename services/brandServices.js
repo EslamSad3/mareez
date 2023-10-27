@@ -1,25 +1,14 @@
 const Brand = require('../models/brandModel');
 const factory = require('./handlersFactory');
+const {  uploadMixOfFiles } = require('../middlewares/uploadImagesMiddleWare');
+// upload images
 
-const asyncHandler = require('express-async-handler');
-const { uploadSingleImage, uploadSingleFile } = require('../middlewares/uploadImagesMiddleWare');
-const { v4 } = require('uuid');
-const sharp = require('sharp');
+exports.uploadBrandImage = uploadMixOfFiles(
+  [
 
-
-
-exports.uploadBrandImage = uploadSingleFile('image');
-exports.resizeBrandImage = asyncHandler(async (req, res, next) => {
-  const filename = `Brand-${Date.now()}-${v4()}.jpeg`;
-  await sharp(req.file.buffer)
-    .resize(600, 600)
-    .toFormat('jpeg')
-    .jpeg({ quality: 90 })
-    .toFile(`./uploads/brands/${filename}`);
-  req.body.image = filename;
-  next();
-});
-
+    { name: 'image', maxCount: 1 },
+  ]
+);
 
 // @desc      Create Brand
 // @route     POST /api/brands

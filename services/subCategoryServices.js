@@ -1,8 +1,4 @@
-const { v4 } = require('uuid');
-const { uploadSingleImage, uploadSingleFile } = require('../middlewares/uploadImagesMiddleWare');
 const factory = require('./handlersFactory');
-const sharp = require('sharp');
-const asyncHandler = require('express-async-handler');
 const SubCategory = require('../models/subCategoryModel');
 
 exports.setCategoryidToBody = (req, res, next) => {
@@ -11,23 +7,19 @@ exports.setCategoryidToBody = (req, res, next) => {
   next();
 };
 
+const {  uploadMixOfFiles } = require('../middlewares/uploadImagesMiddleWare');
+// upload images
+
+exports.uploadSubCategoryImage = uploadMixOfFiles(
+  [
+
+    { name: 'image', maxCount: 1 },
+  ]
+);
+
 // upload single image
 
-exports.uploadSubCategoryImage = uploadSingleFile('image');
 
-exports.resizeSubCategoryImage = asyncHandler(async (req, res, next) => {
-  const filename = `SubCategory-${Date.now()}-${v4()}.jpeg`;
-  if (req.file) {
-    console.log(req.file);
-    await sharp(req.file.buffer)
-      .resize(600, 600)
-      .toFormat('jpeg')
-      .jpeg({ quality: 90 })
-      .toFile(`./uploads/subcategories/${filename}`);
-    req.body.image = filename;
-  }
-  next();
-});
 
 // @desc      Create subCategory
 // @route     POST /api/subcategories

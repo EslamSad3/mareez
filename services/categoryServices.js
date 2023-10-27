@@ -1,24 +1,15 @@
 const Category = require('../models/categoryModel');
 const factory = require('./handlersFactory');
-const asyncHandler = require('express-async-handler');
-const { uploadSingleImage, uploadSingleFile } = require('../middlewares/uploadImagesMiddleWare');
-const { v4 } = require('uuid');
-const sharp = require('sharp');
 
-exports.uploadCategoryImage = uploadSingleFile('image');
+const {  uploadMixOfFiles } = require('../middlewares/uploadImagesMiddleWare');
+// upload images
 
-exports.resizeCategoryImage = asyncHandler(async (req, res, next) => {
-  const filename = `Category-${Date.now()}-${v4()}.jpeg`;
-  if (req.file) {
-    await sharp(req.file.buffer)
-      .resize(600, 600)
-      .toFormat('jpeg')
-      .jpeg({ quality: 90 })
-      .toFile(`./uploads/categories/${filename}`);
-    req.body.image = filename;
-  }
-  next();
-});
+exports.uploadCategoryImage = uploadMixOfFiles(
+  [
+
+    { name: 'image', maxCount: 1 },
+  ]
+);
 
 // @desc      Create Category
 // @route     POST /api/categories

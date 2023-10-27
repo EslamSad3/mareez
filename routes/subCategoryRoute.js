@@ -9,8 +9,7 @@ const {
   deleteSubCategory,
   setCategoryidToBody,
   createFilterObj,
-  uploadSubCategoryImage,
-  // resizeSubCategoryImage,
+  uploadSubCategoryImage
 } = require('../services/subCategoryServices');
 const {
   createSubCategoryValidator,
@@ -27,7 +26,6 @@ router
     auth.allowedTo('admin'),
     setCategoryidToBody,
     uploadSubCategoryImage,
-    // resizeSubCategoryImage,
     createSubCategoryValidator,
     createsubCategory
   )
@@ -38,6 +36,7 @@ router
   .patch(
     auth.protect,
     auth.allowedTo('admin'),
+    uploadSubCategoryImage,
     updateSubCategoryValidator,
     updateSubCategory
   )

@@ -79,12 +79,24 @@ exports.create = (Model) =>
         urlsOfImageCover.push(newPath);
       }
     }
+    const image = [];
+    if (req.files.image) {
+      const files = req.files.image;
+      for (const file of files) {
+        const { path } = file;
+        const newPath = await cloudinaryImageUploadMethod(path);
+        image.push(newPath);
+      }
+    }
 
     if (urlsOfImages) {
       req.body.images = urlsOfImages.map((url) => url.res);
     }
     if (urlsOfImageCover) {
       req.body.imageCover = urlsOfImageCover[0]?.res || " ";
+    }
+    if (image) {
+      req.body.image = image[0]?.res || " ";
     }
 
     const collection = await Model.create(req.body);
@@ -94,27 +106,43 @@ exports.create = (Model) =>
   exports.updateOne = (Model) =>
   asyncHandler(async (req, res, next) => {
 
+    const urlsOfImages = [];
     if (req.files.images) {
-      const urlsOfImages = [];
       const filesImages = req.files.images;
       for (const file of filesImages) {
         const { path } = file;
         const newPath = await cloudinaryImageUploadMethod(path);
         urlsOfImages.push(newPath);
       }
-      req.body.images = urlsOfImages.map((url) => url.res);
+    }
+    const urlsOfImageCover = [];
+    if (req.files.imageCover) {
+      const files = req.files.imageCover;
+      for (const file of files) {
+        const { path } = file;
+        const newPath = await cloudinaryImageUploadMethod(path);
+        urlsOfImageCover.push(newPath);
+      }
+    }
+    const image = [];
+    if (req.files.image) {
+      const files = req.files.image;
+      for (const file of files) {
+        const { path } = file;
+        const newPath = await cloudinaryImageUploadMethod(path);
+        image.push(newPath);
+      }
     }
 
-if (req.files.imageCover) {
-    const urlsOfImageCover = [];
-    const files = req.files.imageCover;
-    for (const file of files) {
-      const { path } = file;
-      const newPath = await cloudinaryImageUploadMethod(path);
-      urlsOfImageCover.push(newPath);
+    if (urlsOfImages) {
+      req.body.images = urlsOfImages.map((url) => url.res);
     }
-    req.body.imageCover = urlsOfImageCover[0]?.res || " ";
-  }
+    if (urlsOfImageCover) {
+      req.body.imageCover = urlsOfImageCover[0]?.res || " ";
+    }
+    if (image) {
+      req.body.image = image[0]?.res || " ";
+    }
 
     const document = await Model.findByIdAndUpdate(req.params.id,req.body, {
       new: true,
@@ -138,9 +166,3 @@ exports.deleteOne = (Model) =>
     }
     res.status(204).send();
   });
-
-// .populate([
-//   { path: 'category', select: 'name' },
-//   { path: 'subcategory', select: 'name' },
-//   { path: 'brand', select: 'name' },
-// ]);

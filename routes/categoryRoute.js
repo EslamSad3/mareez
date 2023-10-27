@@ -7,7 +7,7 @@ const {
   getCategory,
   updateCategory,
   deleteCategory,
-  uploadCategoryImage,
+  uploadCategoryImage
   // resizeCategoryImage,
 } = require('../services/categoryServices');
 const {
@@ -29,7 +29,6 @@ router
     auth.protect,
     auth.allowedTo('admin'),
     uploadCategoryImage,
-    // resizeCategoryImage,
     createCategoryValidator,
     createCategory
   );
@@ -41,7 +40,6 @@ router
     auth.protect,
     auth.allowedTo('admin'),
     uploadCategoryImage,
-    // resizeCategoryImage,
     updateCategoryValidator,
     updateCategory
   )
