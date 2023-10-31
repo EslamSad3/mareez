@@ -3,23 +3,12 @@ const SubCategory = require('../models/subCategoryModel');
 
 exports.setCategoryidToBody = (req, res, next) => {
   // Nested Route
-  if (!req.body.category) req.body.category = req.params.categoryid;
+  req.body.category
+    ? req.body.category
+    : (req.body.category = req.params.categoryid);
+  // if (!req.body.category) req.body.category = req.params.categoryid;
   next();
 };
-
-const {  uploadMixOfFiles } = require('../middlewares/uploadImagesMiddleWare');
-// upload images
-
-exports.uploadSubCategoryImage = uploadMixOfFiles(
-  [
-
-    { name: 'image', maxCount: 1 },
-  ]
-);
-
-// upload single image
-
-
 
 // @desc      Create subCategory
 // @route     POST /api/subcategories

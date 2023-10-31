@@ -9,7 +9,7 @@ cloudinary.config({
   api_secret: process.env.CLOUD_API_SECRET,
 });
 
-const cloudinaryImageUploadMethod = async (file) => {
+exports.cloudinaryImageUploadMethod = async (file) => {
   console.log(file,'file')
   return new Promise((resolve) => {
     cloudinary.v2.uploader.upload(file, (err, res) => {
@@ -49,7 +49,7 @@ exports.getAll = (Model, modelname = '') =>
       .filter()
       .search(modelname)
       .limitFields()
-      .sort();
+      .sort()
     // Excute query
     const { mongooseQuery, paginateResult } = apiFeauters;
     const collection = await mongooseQuery;
@@ -61,12 +61,15 @@ exports.getAll = (Model, modelname = '') =>
 exports.create = (Model) =>
   asyncHandler(async (req, res) => {
 
+    if(req.file || req.files){
+
+    
     const urlsOfImages = [];
     if (req.files.images) {
       const filesImages = req.files.images;
       for (const file of filesImages) {
         const { path } = file;
-        const newPath = await cloudinaryImageUploadMethod(path);
+        const newPath = await this.cloudinaryImageUploadMethod(path);
         urlsOfImages.push(newPath);
       }
     }
@@ -75,7 +78,7 @@ exports.create = (Model) =>
       const files = req.files.imageCover;
       for (const file of files) {
         const { path } = file;
-        const newPath = await cloudinaryImageUploadMethod(path);
+        const newPath = await this.cloudinaryImageUploadMethod(path);
         urlsOfImageCover.push(newPath);
       }
     }
@@ -84,7 +87,7 @@ exports.create = (Model) =>
       const files = req.files.image;
       for (const file of files) {
         const { path } = file;
-        const newPath = await cloudinaryImageUploadMethod(path);
+        const newPath = await this.cloudinaryImageUploadMethod(path);
         image.push(newPath);
       }
     }
@@ -93,19 +96,18 @@ exports.create = (Model) =>
       req.body.images = urlsOfImages.map((url) => url.res);
     }
     if (urlsOfImageCover) {
-      req.body.imageCover = urlsOfImageCover[0]?.res || " ";
+      req.body.imageCover = urlsOfImageCover[0]?.res;
     }
     if (image) {
-      req.body.image = image[0]?.res || " ";
+      req.body.image = image[0]?.res;
     }
-
+  }
     const collection = await Model.create(req.body);
     res.status(201).json({ data: collection });
   });
 
   exports.updateOne = (Model) =>
   asyncHandler(async (req, res, next) => {
-
     const urlsOfImages = [];
     if (req.files.images) {
       const filesImages = req.files.images;
@@ -114,48 +116,34 @@ exports.create = (Model) =>
         const newPath = await cloudinaryImageUploadMethod(path);
         urlsOfImages.push(newPath);
       }
-    }
-    const urlsOfImageCover = [];
-    if (req.files.imageCover) {
-      const files = req.files.imageCover;
-      for (const file of files) {
-        const { path } = file;
-        const newPath = await cloudinaryImageUploadMethod(path);
-        urlsOfImageCover.push(newPath);
-      }
-    }
-    const image = [];
-    if (req.files.image) {
-      const files = req.files.image;
-      for (const file of files) {
-        const { path } = file;
-        const newPath = await cloudinaryImageUploadMethod(path);
-        image.push(newPath);
-      }
-    }
-
-    if (urlsOfImages) {
       req.body.images = urlsOfImages.map((url) => url.res);
     }
-    if (urlsOfImageCover) {
-      req.body.imageCover = urlsOfImageCover[0]?.res || " ";
-    }
-    if (image) {
-      req.body.image = image[0]?.res || " ";
+
+    if (req.files.imageCover) {
+      const files = req.files.imageCover;
+      const { path } = files[0];
+      const newPath = await cloudinaryImageUploadMethod(path);
+      req.body.imageCover = newPath.res;
     }
 
-    const document = await Model.findByIdAndUpdate(req.params.id,req.body, {
+    if (req.files.image) {
+      const files = req.files.image;
+      const { path } = files[0];
+      const newPath = await cloudinaryImageUploadMethod(path);
+      req.body.image = newPath.res;
+    }
+
+    const document = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
 
     if (!document) {
-      return next(
-        new ApiError(`No document for this id ${req.params.id}`, 404)
-      );
+      return next(new ApiError(`No document for this id ${req.params.id}`, 404));
     }
     await document.save();
     res.status(200).json({ data: document });
   });
+
 
 exports.deleteOne = (Model) =>
   asyncHandler(async (req, res, next) => {

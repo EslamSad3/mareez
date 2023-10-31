@@ -9,7 +9,6 @@ const {
   deleteSubCategory,
   setCategoryidToBody,
   createFilterObj,
-  uploadSubCategoryImage
 } = require('../services/subCategoryServices');
 const {
   createSubCategoryValidator,
@@ -22,10 +21,9 @@ const router = express.Router({ mergeParams: true });
 router
   .route('/')
   .post(
+    setCategoryidToBody,
     auth.protect,
     auth.allowedTo('admin'),
-    setCategoryidToBody,
-    uploadSubCategoryImage,
     createSubCategoryValidator,
     createsubCategory
   )
@@ -36,7 +34,6 @@ router
   .patch(
     auth.protect,
     auth.allowedTo('admin'),
-    uploadSubCategoryImage,
     updateSubCategoryValidator,
     updateSubCategory
   )

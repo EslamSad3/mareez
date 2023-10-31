@@ -2,6 +2,7 @@ const Product = require('../models/productModel');
 const factory = require('./handlersFactory');
 const { uploadMixOfFiles,
 } = require('../middlewares/uploadImagesMiddleWare');
+const expressAsyncHandler = require('express-async-handler');
 // upload images
 
 exports.uploadProductImages = uploadMixOfFiles(
@@ -39,7 +40,41 @@ exports.getProducts = factory.getAll(Product, 'Product');
 // @desc      Update product
 // @route     PATCH /api/products/:id
 // @access    private
-exports.updateProduct = factory.updateOne(Product);
+exports.updateProduct = expressAsyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  console.log(req.files.images);
+  if (req.files.images) {
+    const urlsOfImages = [];
+    const filesImages = req.files.images;
+    for (const file of filesImages) {
+      const { path } = file;
+      const newPath = await factory.cloudinaryImageUploadMethod(path);
+      urlsOfImages.push(newPath);
+    }
+    req.body.images = urlsOfImages.map((url) => url.res);
+  }
+
+  if (req.files.imageCover) {
+    const urlsOfImageCover = [];
+    const files = req.files.imageCover;
+    for (const file of files) {
+      const { path } = file;
+      const newPath = await factory.cloudinaryImageUploadMethod(path);
+      urlsOfImageCover.push(newPath);
+    }
+    req.body.imageCover = urlsOfImageCover[0]?.res || " ";
+  }
+
+  if (req.body.name) {
+    req.body.slug = slugify(req.body.name);
+  }
+
+  let product = await Product.findByIdAndUpdate(id, req.body, {
+    new: true,
+  });
+  !product && next(new ApiError("Product not found", 400));
+  product && res.status(200).json({ data: product });
+});
 
 // @desc      Delete product
 // @route     DELETE /api/products/:id

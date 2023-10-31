@@ -36,11 +36,10 @@ router
 router
   .route('/:id')
   .get(getProductValidator, getProduct)
-  .patch(
+  .put(
     auth.protect,
     auth.allowedTo('admin'),
     uploadProductImages,
-    // resizeProductImages,
     updateProductValidator,
     updateProduct
   )

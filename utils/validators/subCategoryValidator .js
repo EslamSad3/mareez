@@ -14,7 +14,7 @@ exports.getSubCategoryValidator = [
 exports.createSubCategoryValidator = [
   check('name')
     .notEmpty()
-    .withMessage('category Required')
+    .withMessage('SubCategory name Required')
     .isLength({ min: 2 })
     .withMessage('Too Short Name')
     .isLength({ max: 20 })
