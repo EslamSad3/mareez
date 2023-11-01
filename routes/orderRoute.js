@@ -8,6 +8,7 @@ const {
   updateOrderToDelivered,
   updateOrderToPaid,
   checkOutSession,
+  deleteOrder,
 } = require('../services/orderServices');
 const router = express.Router();
 
@@ -27,5 +28,6 @@ router.route('/:id').get(getSpesificOrder);
 router.use(auth.allowedTo('admin'));
 router.route('/:id/pay').patch(updateOrderToPaid);
 router.route('/:id/delivered').patch(updateOrderToDelivered);
+router.route('/:id').delete(deleteOrder);
 
 module.exports = router;
