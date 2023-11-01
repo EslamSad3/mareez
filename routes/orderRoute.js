@@ -5,10 +5,12 @@ const {
   getAllOrders,
   getSpesificOrder,
   filterOrdersByLoggedUser,
-  updateOrderToDelivered,
+
   updateOrderToPaid,
   checkOutSession,
   deleteOrder,
+
+  updateOrderState,
 } = require('../services/orderServices');
 const router = express.Router();
 
@@ -27,7 +29,7 @@ router.route('/:id').get(getSpesificOrder);
 
 router.use(auth.allowedTo('admin'));
 router.route('/:id/pay').patch(updateOrderToPaid);
-router.route('/:id/delivered').patch(updateOrderToDelivered);
+router.route('/:id/:Orderstatus').patch(updateOrderState);
 router.route('/:id').delete(deleteOrder);
 
 module.exports = router;

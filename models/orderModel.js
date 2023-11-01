@@ -42,7 +42,7 @@ const orderSchema = new mongoose.Schema(
     },
     isPaid: { type: Boolean, default: false },
     paidAt: Date,
-    isDelivered: { type: Boolean, default: false },
+    status: { type: String, enum: ['delivered', 'review','shipping'], default: 'review' },
     deliveredAt: Date,
   },
   { timestamps: true }

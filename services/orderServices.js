@@ -88,18 +88,46 @@ exports.updateOrderToPaid = asyncHandler(async (req, res, next) => {
 // @access  private/ admin
 
 exports.updateOrderToDelivered = asyncHandler(async (req, res, next) => {
+  req.params.id ? req.params.id : (req.params.id = req.body.id);
   const order = await Order.findById(req.params.id);
   if (!order) {
     return next(new ApiError('No order Found For This ID', 404));
   }
   // update order to Delivered
-  order.isDelivered = true;
+  order.status = 'delivered';
   order.deliveredAt = Date.now();
 
   const updatedOrder = await order.save();
   res.status(200).json({
     status: 'success',
-    message: 'Order paid successfully',
+    message: 'Order Delivered successfully',
+    data: updatedOrder,
+  });
+});
+
+// @desc    Update Order Status to Shipping
+// @route   PATCH /api/orders/:orderid/Shipping
+// @access  private/ admin
+
+exports.updateOrderState = asyncHandler(async (req, res, next) => {
+  req.params.id ? req.params.id : (req.params.id = req.body.id);
+  const { Orderstatus } = req.params;
+  const order = await Order.findById(req.params.id);
+  if (!order) {
+    return next(new ApiError('No order Found For This ID', 404));
+  }
+  console.log(req.params,'req.params');
+  console.log(Orderstatus);
+  // update order to Delivered
+  order.status = Orderstatus;
+  if (Orderstatus === 'delivered') {
+    order.deliveredAt = Date.now();
+  }
+
+  const updatedOrder = await order.save();
+  res.status(200).json({
+    status: 'success',
+    message: `Order is ${Orderstatus}`,
     data: updatedOrder,
   });
 });
@@ -180,7 +208,6 @@ const createCardOrder = async (session) => {
   }
 };
 
-
 // @desc    This webhook will run when stripe payment successfully done
 // @route   POST /webhook-checkout
 // @access  private/ user
@@ -207,4 +234,4 @@ exports.webhookCheckout = asyncHandler(async (req, res, next) => {
   res.status(200).json({ received: true });
 });
 
-exports.deleteOrder = factory.deleteOne(Order)
+exports.deleteOrder = factory.deleteOne(Order);
