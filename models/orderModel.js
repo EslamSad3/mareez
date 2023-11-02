@@ -40,7 +40,7 @@ const orderSchema = new mongoose.Schema(
       enum: ['card', 'cash'],
       default: 'cash',
     },
-    isPaid: { type: Boolean, default: false },
+    isPaid: { type: String, enum: ['paid','NotPaid'], default: 'NotPaid' },
     paidAt: Date,
     status: { type: String, enum: ['delivered', 'review','shipping'], default: 'review' },
     deliveredAt: Date,

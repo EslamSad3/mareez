@@ -67,18 +67,22 @@ exports.getSpesificOrder = factory.getOne(Order);
 // @access  private/ admin
 
 exports.updateOrderToPaid = asyncHandler(async (req, res, next) => {
+  const { Paymentstatus } = req.params;
+
   const order = await Order.findById(req.params.id);
   if (!order) {
     return next(new ApiError('No order Found For This ID', 404));
   }
   // update order to paid
-  order.isPaid = true;
-  order.paidAt = Date.now();
+  order.isPaid = Paymentstatus;
+  if(Paymentstatus === 'paid') {
+    order.paidAt = Date.now();
+  }
 
   const updatedOrder = await order.save();
   res.status(200).json({
     status: 'success',
-    message: 'Order paid successfully',
+    message: `Order ${Paymentstatus}`,
     data: updatedOrder,
   });
 });
@@ -94,8 +98,7 @@ exports.updateOrderState = asyncHandler(async (req, res, next) => {
   if (!order) {
     return next(new ApiError('No order Found For This ID', 404));
   }
-  console.log(req.params,'req.params');
-  console.log(Orderstatus);
+
   // update order to Delivered
   order.status = Orderstatus;
   if (Orderstatus === 'delivered') {

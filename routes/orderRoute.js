@@ -28,8 +28,8 @@ router
 router.route('/:id').get(getSpesificOrder);
 
 router.use(auth.allowedTo('admin'));
-router.route('/:id/pay').patch(updateOrderToPaid);
-router.route('/:id/:Orderstatus').patch(updateOrderState);
+router.route('/:id/:Paymentstatus').patch(updateOrderToPaid);
+router.route('/:id/:Orderstatus').put(updateOrderState);
 router.route('/:id').delete(deleteOrder);
 
 module.exports = router;
