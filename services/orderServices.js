@@ -110,7 +110,6 @@ exports.updateOrderToDelivered = asyncHandler(async (req, res, next) => {
 // @access  private/ admin
 
 exports.updateOrderState = asyncHandler(async (req, res, next) => {
-  req.params.id ? req.params.id : (req.params.id = req.body.id);
   const { Orderstatus } = req.params;
   const order = await Order.findById(req.params.id);
   if (!order) {
