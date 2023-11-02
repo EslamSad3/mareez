@@ -54,6 +54,16 @@ exports.updateProduct = expressAsyncHandler(async (req, res, next) => {
     req.body.images = urlsOfImages.map((url) => url.res);
   }
 
+  if (req.files.image) {
+    const urlsOfimage = [];
+    const files = req.files.image;
+    for (const file of files) {
+      const { path } = file;
+      const newPath = await factory.cloudinaryImageUploadMethod(path);
+      urlsOfimage.push(newPath);
+    }
+    req.body.image = urlsOfimage[0]?.res || " ";
+  }
   if (req.files.imageCover) {
     const urlsOfImageCover = [];
     const files = req.files.imageCover;

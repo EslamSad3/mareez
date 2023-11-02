@@ -78,12 +78,26 @@ exports.create = (Model) =>
           urlsOfImageCover.push(newPath);
         }
       }
+      
+      const urlsOfimage = [];
+      if (req.files.image) {
+        const files = req.files.image;
+        for (const file of files) {
+          const { path } = file;
+          const newPath = await this.cloudinaryImageUploadMethod(path);
+          urlsOfimage.push(newPath);
+        }
+        req.body.image = urlsOfimage[0]?.res || " ";
+      }
 
       if (urlsOfImages) {
         req.body.images = urlsOfImages.map((url) => url.res);
       }
       if (urlsOfImageCover) {
         req.body.imageCover = urlsOfImageCover[0]?.res;
+      }
+      if (urlsOfimage) {
+        req.body.image = urlsOfimage[0]?.res;
       }
     }
 
