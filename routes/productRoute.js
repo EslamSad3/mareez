@@ -36,7 +36,7 @@ router
 router
   .route('/:id')
   .get(getProductValidator, getProduct)
-  .put(
+  .patch(
     auth.protect,
     auth.allowedTo('admin'),
     uploadProductImages,

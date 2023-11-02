@@ -69,6 +69,19 @@ exports.updateProduct = expressAsyncHandler(async (req, res, next) => {
     req.body.slug = slugify(req.body.name);
   }
 
+  if (req.body.colors) {
+    const colors = req.body.colors;
+    console.log(colors)
+    const newColors = colors.split(',');
+    req.body.colors = newColors;
+  }
+  if (req.body.sizes) {
+    const sizes = req.body.sizes;
+    const newsizes = sizes.split(',');
+    console.log(newsizes, 'Sizes');
+    req.body.sizes = newsizes;
+  }
+
   let product = await Product.findByIdAndUpdate(id, req.body, {
     new: true,
   });

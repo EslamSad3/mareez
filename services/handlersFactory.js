@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const ApiError = require('../utils/apiError');
 const ApiFeatures = require('../utils/apiFeauters');
-const cloudinary = require("cloudinary");
+const cloudinary = require('cloudinary');
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_MAME,
@@ -10,11 +10,10 @@ cloudinary.config({
 });
 
 exports.cloudinaryImageUploadMethod = async (file) => {
-  console.log(file,'file')
   return new Promise((resolve) => {
     cloudinary.v2.uploader.upload(file, (err, res) => {
-      console.log(err)
-      if (err) return res.status(500).send("upload image error");
+      console.log(err, 'err 15');
+      if (err) return res.status(500).send('upload image error');
       resolve({
         res: res.secure_url,
       });
@@ -49,7 +48,7 @@ exports.getAll = (Model, modelname = '') =>
       .filter()
       .search(modelname)
       .limitFields()
-      .sort()
+      .sort();
     // Excute query
     const { mongooseQuery, paginateResult } = apiFeauters;
     const collection = await mongooseQuery;
@@ -60,90 +59,93 @@ exports.getAll = (Model, modelname = '') =>
 
 exports.create = (Model) =>
   asyncHandler(async (req, res) => {
-
-    if(req.file || req.files){
-
-    
-    const urlsOfImages = [];
-    if (req.files.images) {
-      const filesImages = req.files.images;
-      for (const file of filesImages) {
-        const { path } = file;
-        const newPath = await this.cloudinaryImageUploadMethod(path);
-        urlsOfImages.push(newPath);
+    if (req.file || req.files) {
+      const urlsOfImages = [];
+      if (req.files.images) {
+        const filesImages = req.files.images;
+        for (const file of filesImages) {
+          const { path } = file;
+          const newPath = await this.cloudinaryImageUploadMethod(path);
+          urlsOfImages.push(newPath);
+        }
       }
-    }
-    const urlsOfImageCover = [];
-    if (req.files.imageCover) {
-      const files = req.files.imageCover;
-      for (const file of files) {
-        const { path } = file;
-        const newPath = await this.cloudinaryImageUploadMethod(path);
-        urlsOfImageCover.push(newPath);
+      const urlsOfImageCover = [];
+      if (req.files.imageCover) {
+        const files = req.files.imageCover;
+        for (const file of files) {
+          const { path } = file;
+          const newPath = await this.cloudinaryImageUploadMethod(path);
+          urlsOfImageCover.push(newPath);
+        }
       }
-    }
-    const image = [];
-    if (req.files.image) {
-      const files = req.files.image;
-      for (const file of files) {
-        const { path } = file;
-        const newPath = await this.cloudinaryImageUploadMethod(path);
-        image.push(newPath);
+
+      if (urlsOfImages) {
+        req.body.images = urlsOfImages.map((url) => url.res);
+      }
+      if (urlsOfImageCover) {
+        req.body.imageCover = urlsOfImageCover[0]?.res;
       }
     }
 
-    if (urlsOfImages) {
-      req.body.images = urlsOfImages.map((url) => url.res);
+    if (req.body.colors) {
+      const colors = req.body.colors;
+      const newColors = colors.split(',');
+      req.body.colors = newColors;
+      console.log(req.body.colors, 'newColors');
     }
-    if (urlsOfImageCover) {
-      req.body.imageCover = urlsOfImageCover[0]?.res;
+
+    if (req.body.sizes) {
+      const sizes = req.body.sizes;
+      const newsizes = sizes.split(',');
+      console.log(newsizes, 'Sizes');
+      req.body.sizes = newsizes;
     }
-    if (image) {
-      req.body.image = image[0]?.res;
-    }
-  }
+
     const collection = await Model.create(req.body);
     res.status(201).json({ data: collection });
   });
 
-  exports.updateOne = (Model) =>
+exports.updateOne = (Model) =>
   asyncHandler(async (req, res, next) => {
-    const urlsOfImages = [];
-    if (req.files.images) {
-      const filesImages = req.files.images;
-      for (const file of filesImages) {
-        const { path } = file;
-        const newPath = await cloudinaryImageUploadMethod(path);
-        urlsOfImages.push(newPath);
+    if (req.file || req.files) {
+      const urlsOfImages = [];
+      if (req.files.images) {
+        const filesImages = req.files.images;
+        for (const file of filesImages) {
+          const { path } = file;
+          const newPath = await this.cloudinaryImageUploadMethod(path);
+          urlsOfImages.push(newPath);
+        }
       }
-      req.body.images = urlsOfImages.map((url) => url.res);
-    }
+      const urlsOfImageCover = [];
+      if (req.files.imageCover) {
+        const files = req.files.imageCover;
+        for (const file of files) {
+          const { path } = file;
+          const newPath = await this.cloudinaryImageUploadMethod(path);
+          urlsOfImageCover.push(newPath);
+        }
+      }
 
-    if (req.files.imageCover) {
-      const files = req.files.imageCover;
-      const { path } = files[0];
-      const newPath = await cloudinaryImageUploadMethod(path);
-      req.body.imageCover = newPath.res;
+      if (urlsOfImages) {
+        req.body.images = urlsOfImages.map((url) => url.res);
+      }
+      if (urlsOfImageCover) {
+        req.body.imageCover = urlsOfImageCover[0]?.res;
+      }
     }
-
-    if (req.files.image) {
-      const files = req.files.image;
-      const { path } = files[0];
-      const newPath = await cloudinaryImageUploadMethod(path);
-      req.body.image = newPath.res;
-    }
-
     const document = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
 
     if (!document) {
-      return next(new ApiError(`No document for this id ${req.params.id}`, 404));
+      return next(
+        new ApiError(`No document for this id ${req.params.id}`, 404)
+      );
     }
     await document.save();
     res.status(200).json({ data: document });
   });
-
 
 exports.deleteOne = (Model) =>
   asyncHandler(async (req, res, next) => {

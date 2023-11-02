@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const productSchema = new mongoose.Schema(
   {
     title: {
@@ -41,11 +40,14 @@ const productSchema = new mongoose.Schema(
       type: Number,
     },
     colors: {
-      type: [String]
+      type: [String],
     },
+    sizes: {
+      type: [String],
+    },
+
     imageCover: {
       type: String,
-      // required: [true, 'image Cover is required'],
     },
     images: {
       type: [String],
@@ -55,12 +57,11 @@ const productSchema = new mongoose.Schema(
       ref: 'category',
       required: [true, 'product must belong to category'],
     },
-    subcategory: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'subcategory',
-      },
-    ],
+    subcategory: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'subcategory',
+    },
+
     brand: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'brand',
@@ -102,29 +103,5 @@ productSchema.pre(/^create/, function (next) {
   ]);
   next();
 });
-
-// const setImageToUrl = (doc) => {
-//   if (doc.imageCover) {
-//     const imageUrl = `${process.env.BASE_URL}/products/${doc.imageCover}`;
-//     doc.imageCover = imageUrl;
-//   }
-//   if (doc.images) {
-//     const imagesList = [];
-//     doc.images.forEach((image) => {
-//       const imageUrl = `${process.env.BASE_URL}/products/${image}`;
-//       imagesList.push(imageUrl);
-//     });
-//     doc.images = imagesList;
-//   }
-// };
-
-// productSchema.post('init', (doc) => {
-//   setImageToUrl(doc);
-// });
-// productSchema.post('save', (doc) => {
-//   setImageToUrl(doc);
-// });
-
-
 
 module.exports = mongoose.model('product', productSchema);
