@@ -83,30 +83,9 @@ exports.updateOrderToPaid = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Update Order Status to delivered
-// @route   PATCH /api/orders/:orderid/delivered
-// @access  private/ admin
 
-exports.updateOrderToDelivered = asyncHandler(async (req, res, next) => {
-  req.params.id ? req.params.id : (req.params.id = req.body.id);
-  const order = await Order.findById(req.params.id);
-  if (!order) {
-    return next(new ApiError('No order Found For This ID', 404));
-  }
-  // update order to Delivered
-  order.status = 'delivered';
-  order.deliveredAt = Date.now();
-
-  const updatedOrder = await order.save();
-  res.status(200).json({
-    status: 'success',
-    message: 'Order Delivered successfully',
-    data: updatedOrder,
-  });
-});
-
-// @desc    Update Order Status to Shipping
-// @route   PATCH /api/orders/:orderid/Shipping
+// @desc    Update Order Status
+// @route   PATCH /api/orders/:orderid/:Orderstatus
 // @access  private/ admin
 
 exports.updateOrderState = asyncHandler(async (req, res, next) => {
