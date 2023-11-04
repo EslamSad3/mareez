@@ -15,14 +15,14 @@ exports.setCategoryidToBody = (req, res, next) => {
 // @access    private
 exports.createsubCategory = factory.create(SubCategory);
 
-// Get subcategories by categoryid
-exports.createFilterObj = (req, res, next) => {
-  const filterObj = req.params.categoryid
-    ? { category: req.params.categoryid }
-    : {};
-  req.filterObj = filterObj;
-  next();
-};
+// // Get subcategories by categoryid
+// exports.createCategoryFilterObj = (req, res, next) => {
+//   const filterObj = req.params.categoryid
+//     ? { category: req.params.categoryid }
+//     : {};
+//   req.filterObj = filterObj;
+//   next();
+// };
 
 // @desc      Get List Of SubCategories
 // @route     GET /api/subcategories

@@ -18,9 +18,11 @@ const {
 } = require('../utils/validators/categoryValidator');
 
 const subCategoriesRoute = require('./subCategoryRoute');
+const productRoute = require('./productRoute');
 
 const router = express.Router();
 router.use('/:categoryid/subcategories', subCategoriesRoute);
+router.use('/:categoryid/products', productRoute);
 
 router
   .route('/')

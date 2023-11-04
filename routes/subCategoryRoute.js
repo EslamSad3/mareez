@@ -8,7 +8,6 @@ const {
   updateSubCategory,
   deleteSubCategory,
   setCategoryidToBody,
-  createFilterObj,
 } = require('../services/subCategoryServices');
 const {
   createSubCategoryValidator,
@@ -16,8 +15,10 @@ const {
   updateSubCategoryValidator,
   deleteSubCategoryValidator,
 } = require('../utils/validators/subCategoryValidator ');
-
+const { createSubCategoryFilterObj } = require('../middlewares/filterObjMiddleWare');
+const productRoute = require('./productRoute')
 const router = express.Router({ mergeParams: true });
+router.use('/:subcategoryid/products', productRoute);
 router
   .route('/')
   .post(
@@ -27,7 +28,7 @@ router
     createSubCategoryValidator,
     createsubCategory
   )
-  .get(createFilterObj, getsubCategorires);
+  .get(createSubCategoryFilterObj, getsubCategorires);
 router
   .route('/:id')
   .get(getSubCategoryValidator, getSubCategory)

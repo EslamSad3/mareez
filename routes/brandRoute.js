@@ -1,6 +1,6 @@
 const express = require('express');
 const auth = require('../services/authServices');
-
+const productRoute = require('./productRoute');
 const {
   createBrand,
   getBrands,
@@ -17,6 +17,7 @@ const {
 } = require('../utils/validators/brandValidator');
 
 const router = express.Router();
+router.use('/:brandid/products', productRoute);
 
 router
   .route('/')

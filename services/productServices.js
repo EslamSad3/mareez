@@ -104,11 +104,7 @@ exports.updateProduct = expressAsyncHandler(async (req, res, next) => {
 // @access    private
 exports.deleteProduct = factory.deleteOne(Product);
 
-// .populate([
-//   { path: 'category', select: 'name' },
-//   { path: 'subcategory', select: 'name' },
-//   { path: 'brand', select: 'name' },
-// ]);
+
 
 exports.averageRatings = Product.aggregate([
   { $match: { reviews: [] } },

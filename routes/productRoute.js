@@ -18,12 +18,17 @@ const {
 } = require('../utils/validators/productValidator');
 
 const reviewRoute = require('./reviewRoute');
+const { createCategoryFilterObj, createSubCategoryFilterObj,createbrandFilterObj } = require('../middlewares/filterObjMiddleWare');
 
-const router = express.Router();
+
+
+
+
+const router = express.Router({mergeParams:true});
 router.use('/:productid/reviews', reviewRoute);
 router
   .route('/')
-  .get(getProducts)
+  .get(createCategoryFilterObj,createSubCategoryFilterObj,createbrandFilterObj,getProducts)
   .post(
     auth.protect,
     auth.allowedTo('admin'),
