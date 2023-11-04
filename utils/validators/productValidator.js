@@ -100,8 +100,8 @@ exports.createProductValidator = [
     .optional()
     .isNumeric()
     .withMessage('rating must be a number')
-    .isLength({ min: 1, max: 5 })
-    .withMessage('rating must be between 1 and 5'),
+    .isLength({ min: 0, max: 5 })
+    .withMessage('rating must be between 0 and 5'),
   check('rates').optional().isNumeric().withMessage('rating must be a number'),
   validatorMiddleWare,
 ];

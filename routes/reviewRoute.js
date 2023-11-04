@@ -16,12 +16,6 @@ const {
   deleteReviewValidator,
   getReviewValidator,
 } = require('../utils/validators/reviewValidator');
-// const {
-//   getReviewValidator,
-//   createBrandValidator,
-//   updateBrandValidator,
-//   deleteBrandValidator,
-// } = require('../utils/validators/brandValidator');
 
 const router = express.Router({ mergeParams: true });
 
@@ -40,13 +34,13 @@ router
   .get(getReviewValidator, getReview)
   .patch(
     auth.protect,
-    auth.allowedTo('admin', 'user'),
+    auth.allowedTo('admin'),
     updateReviewValidator,
     updateReview
   )
   .delete(
     auth.protect,
-    auth.allowedTo('admin', 'user'),
+    auth.allowedTo('admin'),
     deleteReviewValidator,
     deleteReview
   );
