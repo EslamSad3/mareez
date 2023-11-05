@@ -35,7 +35,7 @@ exports.createUser = factory.create(User);
 // @desc      Get Specific User by id
 // @route     GET /api/users/:id
 // @access    private
-exports.getUser = factory.getOne(User,{path:'cart'});
+exports.getUser = factory.getOne(User);
 
 // @desc      Get List Of Users
 // @route     GET /api/users

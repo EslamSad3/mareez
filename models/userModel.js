@@ -47,8 +47,8 @@ const userSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.ObjectId,
         ref: 'product',
-      }],
-
+      },
+    ],
     addresses: [
       {
         id: { type: mongoose.Schema.Types.ObjectId },
@@ -62,8 +62,6 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-
 
 userSchema.pre('save', async function (next) {
   // Hashing Password
