@@ -6,7 +6,9 @@ const Cart = require('../models/cartModel');
 
 const calcCartTotalPrice = (cart) => {
   let totalPrice = 0;
-  cart.cartItems.forEach((item) => (totalPrice += item.quantity * item.price));
+  cart.cartItems.forEach(
+    (item) => (totalPrice += item.cartQuantity * item.price)
+  );
   cart.total = totalPrice;
   cart.totalAfterDiscount = undefined;
   return totalPrice;
@@ -22,10 +24,12 @@ exports.addToCart = asyncHandler(async (req, res, next) => {
   let cart = await Cart.findOne({ user: req.user._id });
   if (!cart) {
     // if No cart Just Create New One with product
-    cart = await Cart.create({
-      user: req.user._id,
-      cartItems: [{ product: productId, color, size, price: product.price }],
-    });
+    cart = await Cart.create(
+      {
+        user: req.user._id,
+        cartItems: [{ product: productId, color, size, price: product.price }],
+      }
+    );
   } else {
     // if product exists already in cart, update product quantity
     const productIndex = cart.cartItems.findIndex(
@@ -34,7 +38,7 @@ exports.addToCart = asyncHandler(async (req, res, next) => {
     // console.log(productIndex)
     if (productIndex > -1) {
       const cartItem = cart.cartItems[productIndex];
-      cartItem.quantity += 1;
+      cartItem.cartQuantity += 1;
       // cartItem.price = cartItem.quantity * cartItem.price
       cart.cartItems[productIndex] = cartItem;
     } else {
@@ -111,7 +115,7 @@ exports.deleteAllItemsFromCart = asyncHandler(async (req, res, next) => {
 // @access    Private/User
 
 exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
-  const { quantity } = req.body;
+  const { cartQuantity } = req.body;
   const cart = await Cart.findOne({ user: req.user._id });
   if (!cart) {
     return next(new ApiError('No Cart FOr This User', 404));
@@ -121,7 +125,7 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
   );
   if (itemIndex > -1) {
     const cartItem = cart.cartItems[itemIndex];
-    cartItem.quantity = quantity;
+    cartItem.cartQuantity = cartQuantity;
     cart.cartItems[itemIndex] = cartItem;
   } else {
     return next(
@@ -140,7 +144,6 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
 // @access    Private/User
 
 exports.applyCouponOnCart = asyncHandler(async (req, res, next) => {
-
   // get Coupon Based on Name
   const coupon = await Coupon.findOne({
     name: req.body.coupon,
@@ -149,9 +152,9 @@ exports.applyCouponOnCart = asyncHandler(async (req, res, next) => {
   if (!coupon) {
     return next(new ApiError(`Invalid Or Expired coupon`));
   }
-    // get logged user cart
-    const cart = await Cart.findOne({ user: req.user._id });
-    let totalCartPrice = cart.total;
+  // get logged user cart
+  const cart = await Cart.findOne({ user: req.user._id });
+  let totalCartPrice = cart.total;
 
   // calc toal afer discount
   let totalPriceAfterDiscount = (

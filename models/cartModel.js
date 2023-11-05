@@ -7,7 +7,7 @@ const cartSchema = new mongoose.Schema(
           type: mongoose.Schema.ObjectId,
           ref: 'product',
         },
-        quantity: {
+        cartQuantity: {
           type: Number,
           default: 1,
         },
@@ -26,9 +26,7 @@ const cartSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-cartSchema.pre(/^find/, function (next) {
-  this.populate({ path: 'cartItems.product'});
-  next();
-});
+
+
 
 module.exports = mongoose.model('cart', cartSchema);
