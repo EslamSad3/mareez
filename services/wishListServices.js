@@ -26,6 +26,7 @@ exports.addProductToWishlist = asyncHandler(async (req, res, next) => {
 // @route     DELETE /api/wishlist/:productId
 // @access    private/protect/user
 exports.removeProductFromWishlist = asyncHandler(async (req, res, next) => {
+  req.body.productId = req.body.productId ? req.body.productId : req.params.productId
   const user = await User.findByIdAndUpdate(
     req.user._id,
     {
@@ -51,4 +52,5 @@ exports.getLoggedUserWishlist = asyncHandler(async (req, res, next) => {
     status: 'success',
     data: user.wishlist,
   });
+
 });
