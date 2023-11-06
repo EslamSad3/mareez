@@ -27,6 +27,13 @@ const cartSchema = new mongoose.Schema(
 );
 
 
-
+cartSchema.pre(/^find/,function (next){
+  this.populate({path:'cartItems.product'})
+  next();
+})
+cartSchema.pre('save',function (next){
+  this.populate({path:'cartItems.product'})
+  next();
+})
 
 module.exports = mongoose.model('cart', cartSchema);

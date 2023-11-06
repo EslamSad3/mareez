@@ -18,22 +18,27 @@ const calcCartTotalPrice = (cart) => {
 // @access    Private/User
 
 exports.addToCart = asyncHandler(async (req, res, next) => {
-  const { productId, color, size } = req.body;
+  const { productId } = req.body;
   const product = await Product.findById(productId);
   // 1- get logged in user cart
   let cart = await Cart.findOne({ user: req.user._id });
   if (!cart) {
     // if No cart Just Create New One with product
-    cart = await Cart.create(
-      {
-        user: req.user._id,
-        cartItems: [{ product: productId, color, size, price: product.price }],
-      }
-    );
+    cart = await Cart.create({
+      user: req.user._id,
+      cartItems: [
+        {
+          product: productId,
+          price: product.priceAfterDisc
+            ? product.priceAfterDisc
+            : product.price,
+        },
+      ],
+    });
   } else {
     // if product exists already in cart, update product quantity
     const productIndex = cart.cartItems.findIndex(
-      (item) => item.product.toString() === productId && item.color === color
+      (item) => item.product.id.toString() === productId
     );
     // console.log(productIndex)
     if (productIndex > -1) {
@@ -45,9 +50,7 @@ exports.addToCart = asyncHandler(async (req, res, next) => {
       // if product Not exists, push product to cart array
       cart.cartItems.push({
         product: productId,
-        color,
-        size,
-        price: product.price,
+        price: product.priceAfterDisc ? product.priceAfterDisc : product.price,
       });
     }
   }
