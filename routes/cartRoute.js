@@ -16,9 +16,10 @@ router
   .route('/')
   .post(addToCart)
   .get(getLoggedUserCart)
-  .delete(deleteAllItemsFromCart);
+  .delete(deleteAllItemsFromCart)
 router.route("/apply-coupon").patch(applyCouponOnCart)
-router.route('/:itemId').patch(updateCartItemQuantity).delete(deleteItemFromCart);
+router.route('/:itemId').delete(deleteItemFromCart).patch(updateCartItemQuantity)
+
 
 // router.route('/:id').get(getCoupon).patch(updateCoupon).delete(deleteCoupon);
 module.exports = router;

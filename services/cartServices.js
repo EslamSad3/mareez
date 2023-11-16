@@ -123,6 +123,7 @@ exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
   if (!cart) {
     return next(new ApiError('No Cart FOr This User', 404));
   }
+  console.log(cart)
   const itemIndex = cart.cartItems.findIndex(
     (item) => item._id.toString() === req.params.itemId.toString()
   );
